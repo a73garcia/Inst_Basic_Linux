@@ -5,7 +5,7 @@ Modificar el Terminal de Fedora con ZSH e intalación de paquetes basicos.
 Ejecutar desde el terminal:
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Conf_Fedora/refs/heads/main/Config_Inicial_Fedora.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Fedora/refs/heads/main/Ini_Fedora.sh)"
  ```
 
 
