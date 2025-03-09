@@ -2,7 +2,7 @@
 
 Modificar el Terminal con ZSH e intalación de paquetes basicos.
 
-#FEDORA
+## FEDORA
 
 Ejecutar desde el terminal:
 
@@ -10,7 +10,7 @@ Ejecutar desde el terminal:
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Inst_Basic_Fedora.sh)"
  ```
 
-#ARCH
+## ARCH
 
 Ejecutar desde el terminal:
 
