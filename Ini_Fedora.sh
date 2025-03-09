@@ -76,14 +76,8 @@ cd ${ZSH_CUSTOM:-$HOME/}
 
 # Copiar la configuración personalizada de zshrc y p10k del repositorio
 echo -e "\033[31mCopiando configuraciones personalizadas zshrc y p10k del repositorio...\033[0m"
-curl -o /home/$USER/.zshrc https://raw.githubusercontent.com/a73garcia/Conf_Fedora/refs/heads/main/ZSH/zshrc
-curl -o /home/$USER/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Conf_Fedora/refs/heads/main/P10K/p10k.zsh
-
-#sudo rm -r /home/$USER/.zshrc.pre*
-
-# Cambiar propietario del archivo p10k.zsh
-#echo "\033[31mCambiando el propietario del archivo p10k.zsh...\033[0m"
-#sudo chown $USER:$USER "${~/}.p10k.zsh"
+curl -o /home/$USER/.zshrc https://raw.githubusercontent.com/a73garcia/Fedora/refs/heads/main/Config/zshrc
+curl -o /home/$USER/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Fedora/refs/heads/main/Config/p10k.zsh
 
 #---------------------------------
 
