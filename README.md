@@ -1,6 +1,8 @@
 # Configuración inicial en Fedora
 
-Modificar el Terminal de Fedora con ZSH e intalación de paquetes basicos.
+Modificar el Terminal con ZSH e intalación de paquetes basicos.
+
+#FEDORA
 
 Ejecutar desde el terminal:
 
@@ -8,6 +10,13 @@ Ejecutar desde el terminal:
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Fedora/refs/heads/main/Ini_Fedora.sh)"
  ```
 
+#ARCH
+
+Ejecutar desde el terminal:
+
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Fedora/refs/heads/main/Ini_Fedora.sh)"
+ ```
 
 
 - Actualizacion del SO
