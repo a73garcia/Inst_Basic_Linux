@@ -79,8 +79,8 @@ sudo /root/.fzf/install
 
 # Copiar la configuración personalizada de zshrc y p10k
 echo -e "\033[31mCopiando configuraciones personalizadas zshrc y p10k...\033[0m"
-curl -o /root/.zshrc https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/zshrc
-curl -o /root/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/p10k.zsh
+sudo curl -o /root/.zshrc https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/zshrc
+sudo curl -o /root/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/p10k.zsh
 
 #---------------------------------
 
@@ -93,15 +93,6 @@ echo -e "\033[31mCambiando el shell a Zsh...\033[0m"
 sudo usermod --shell /usr/bin/zsh $USER && sudo usermod --shell /usr/bin/zsh root
 
 #---------------------------------
-
-# Iniciar el servicio de Plex
-echo "\033[31mIniciando Plex Media Server y habilitando dn el arranque...\033[0m"
-sudo systemctl enable plexmediaserver.service
-sudo systemctl start plexmediaserver.service
-
-# Comprobar el estado del servicio
-echo -e "\033[31mComprobando el estado de Plex Media Server...\03q3[0m"
-sudo systemctl status plexmediaserver.service
 
 clear
 
