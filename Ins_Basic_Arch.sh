@@ -1,9 +1,6 @@
 #!/bin/bash
 
-echo -e "\033[33m
-Configuración inicial del terminal e instalación de paquetes basicos en SO basados en \033[1m\033[4m\033[32mArch\033[0m
-
-\033[0m"
+echo -e "\033[33mConfiguración inicial del terminal e instalación de paquetes basicos en SO basados en \033[1m\033[4m\033[32mArch\033[0m\033[0m"
 
 #Eliminacion de configuraciones previas
 #Activar solo si es necesario
@@ -12,10 +9,6 @@ Configuración inicial del terminal e instalación de paquetes basicos en SO bas
 # Actualizar paquetes y refrescar metadatos
 echo -e "\033[31mActualizando sistema...\033[0m"
 
-sudo pacman -Syuu
-
-
-echo -e "\033[31mActualizando los repositorios...\033[0m"
 sudo pacman -Syuu
 
 # Instalar paquetes necesarios
@@ -28,20 +21,11 @@ cd /tmp/
 git clone https://aur.archlinux.org/mediawriter.git
 cd mediawriter/
 makepkg -si
-#cd ..
-#git clone https://aur.archlinux.org/balena-etcher.git 
-#cd balena-etcher/
-#makepkg -si
 cd
 
-
-# Instalar ZSH y Clonar el tema powerlevel10k
+# Instalar ohmyzsh
 echo -e "\033[31mInstalando Oh My Zsh...\033[0m"
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# Cambiar el shell a Zsh
-echo -e "\033[31mCambiando el shell a Zsh...\033[0m"
-chsh -s $(which zsh)
 
 echo -e "\033[31mClonando Powerlevel10k...\033[0m"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
@@ -74,12 +58,9 @@ curl -o /home/$USER/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Fedora
 
 # Instalamos ZSH en Root
 echo -e "\033[31mInstalamos ZSH en Root...\033[0m"
-
-# Ir al directorio raiz usuario
-echo -e "\033[31mIr al directorio raiz usuario...\033[0m"
 sudo cd /root/
 
-# Instalar ZSH y Clonar el tema powerlevel10k
+# Clonar el tema powerlevel10k
 echo -e "\033[31mInstalando Oh My Zsh...\033[0m"
 sudo sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
@@ -101,10 +82,20 @@ echo -e "\033[31mCopiando configuraciones personalizadas zshrc y p10k...\033[0m"
 curl -o /root/.zshrc https://raw.githubusercontent.com/a73garcia/Fedora/refs/heads/main/Config/zshrc
 curl -o /root/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Fedora/refs/heads/main/Config/p10k.zsh
 
+#---------------------------------
+
+# Eliminamos archivos duplicados
+echo -e "\033[Eliminamos archivos duplicados de zsh...\033[0m"
 sudo rm -r /home/$USER/.zshrc.pre* /root/.zshrc.pre* /home/$USER/.z /root/.z
 
+# Cambiar el shell a Zsh
+echo -e "\033[31mCambiando el shell a Zsh...\033[0m"
+sudo usermod --shell /usr/bin/zsh gh0stwalk3r && sudo usermod --shell /usr/bin/zsh root
+
+#---------------------------------
+
 # Iniciar el servicio de Plex
-#echo "\033[31mIniciando Plex Media Server y habilitando dn el arranque...\033[0m"
+echo "\033[31mIniciando Plex Media Server y habilitando dn el arranque...\033[0m"
 sudo systemctl enable plexmediaserver.service
 sudo systemctl start plexmediaserver.service
 
