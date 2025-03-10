@@ -47,9 +47,9 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
 
 - [Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
 - [Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-- [zsh-z]([https://www.google.com](https://github.com/agkozak/zsh-z)
+- [zsh-z](https://github.com/agkozak/zsh-z)
 - [Fast Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-- [Autocomplete]([https://www.google.com](https://github.com/marlonrichert/zsh-autocomplete)
+- [Autocomplete](https://github.com/marlonrichert/zsh-autocomplete)
 - [fzf](https://github.com/junegunn/fzf)
 
 7. Descargamos y añadimos las fuentes Meslo
