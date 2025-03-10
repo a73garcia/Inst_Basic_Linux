@@ -15,7 +15,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
 Ejecutar desde el terminal:
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Ins_Basic_Arch.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Inst_Basic_Arch.sh)"
  ```
 
 
