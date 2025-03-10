@@ -1,8 +1,11 @@
 # Configuración inicial en Fedora
 
-Modificar el Terminal con ZSH e intalación de paquetes basicos.
+Modificamos el Terminal para las distribuciones Fedora o ArchLinux con ZSH e instalamos una colección de paquetes basicos.
 
-## FEDORA
+
+# Script de configuracion
+
+### En FEDORA
 
 Ejecutar desde el terminal:
 
@@ -10,7 +13,7 @@ Ejecutar desde el terminal:
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Inst_Basic_Fedora.sh)"
  ```
 
-## ARCH
+### En ARCH
 
 Ejecutar desde el terminal:
 
@@ -19,10 +22,14 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
  ```
 
 
-- Actualizacion del SO
-- Repositorio para instalación de Visual Studio Code y PlexServer
-- Paquetes que se instalan:
+## Procesos llevados a cabo en la configuración
 
+1. Actualizacion del SO
+  
+2. Repositorio para instalación de Visual Studio Code y PlexServer en fedora, para Archlinux se utilizan las fuentes de los repositorios
+  
+3. Se instalan las siguientes utilidades:
+  
             git             net-tools           inkscape            texmaker
             wget            neovim              hexchat             powerline-fonts
             kate            gparted             qbittorrent         gnome-boxes
@@ -32,9 +39,11 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
             lsd             dolphin             keepassxc
             bat             gimp                texlive
 
-- Verificación de actualización
-- Instalación de ZSH y cambio de Shell
-- Se añade Powerlevel10k y pluguins para ZSH
+4. Se realiza una verificación de nuevas actualizaciones después de la intalación de la utilidades
+  
+5. Instalamos ZSH y cambiamos la Shell
+  
+6. Añadimos Powerlevel10k y una colección pluguins para ZSH
 
             Syntax Highlighting
             Autosuggestions
@@ -43,8 +52,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
             Autocomplete
             fzf
 
-- Se descargan fuentes Meslo
-- Se modifican los archivos zshrc y p10k por las configuraciones del repositorio
-- Se levanta el servicio PlexServer
-
-        URL: http://localhost:32400/web
+7. Descargamos y añadimos las fuentes Meslo
+  
+8. Se modifican los archivos zshrc y p10k por los que se encuentran el la carpeta config del repositorio
+  
