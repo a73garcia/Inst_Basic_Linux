@@ -24,6 +24,12 @@ sudo pacman -S git ksshaskpass wget kate feh p7zip locate lsd bat net-tools neov
 
 yay -S plex-media-server
 
+cd /tmp/
+git clone https://aur.archlinux.org/mediawriter.git
+cd mediawriter/
+makepkg -si
+cd
+
 
 # Instalar ZSH y Clonar el tema powerlevel10k
 echo -e "\033[31mInstalando Oh My Zsh...\033[0m"
@@ -119,7 +125,7 @@ echo -e "
             feh             curl                putty               vscode
             p7zip           fastfetch           thunderbird         plex-media-server
             locate          kitty               keepass             zsh
-            lsd             dolphin             keepassxc
+            lsd             dolphin             keepassxc           MediaWriter
             bat             gimp                texlive\033[0m
 
 - Se ha verificado actualizaciones
