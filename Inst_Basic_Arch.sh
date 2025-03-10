@@ -11,6 +11,8 @@ echo -e "\033[31mActualizando sistema...\033[0m"
 
 sudo pacman -Syuu
 
+pamac install base-devel
+
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
 sudo pacman -S git ksshaskpass wget kate feh p7zip locate yay lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepass keepassxc texlive texmaker powerline-fonts gnome-boxes zsh vscode
