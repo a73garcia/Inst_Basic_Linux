@@ -28,6 +28,10 @@ cd /tmp/
 git clone https://aur.archlinux.org/mediawriter.git
 cd mediawriter/
 makepkg -si
+#cd ..
+#git clone https://aur.archlinux.org/balena-etcher.git 
+#cd balena-etcher/
+#makepkg -si
 cd
 
 
