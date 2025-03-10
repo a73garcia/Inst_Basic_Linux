@@ -45,12 +45,12 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
   
 6. Añadimos Powerlevel10k y una colección pluguins para ZSH
 
-6.1 [Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-6.2 [Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-6.3 [zsh-z]([https://www.google.com](https://github.com/agkozak/zsh-z))
-6.4 [Fast Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-6.5[Autocomplete]([https://www.google.com](https://github.com/marlonrichert/zsh-autocomplete))
-6.6 [fzf](https://github.com/junegunn/fzf)
+- [Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+- [Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
+- [zsh-z]([https://www.google.com](https://github.com/agkozak/zsh-z))
+- [Fast Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+- [Autocomplete]([https://www.google.com](https://github.com/marlonrichert/zsh-autocomplete))
+- [fzf](https://github.com/junegunn/fzf)
 
 7. Descargamos y añadimos las fuentes Meslo
   
