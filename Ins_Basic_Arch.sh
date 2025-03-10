@@ -90,7 +90,7 @@ sudo rm -r /home/$USER/.zshrc.pre* /root/.zshrc.pre* /home/$USER/.z /root/.z
 
 # Cambiar el shell a Zsh
 echo -e "\033[31mCambiando el shell a Zsh...\033[0m"
-sudo usermod --shell /usr/bin/zsh gh0stwalk3r && sudo usermod --shell /usr/bin/zsh root
+sudo usermod --shell /usr/bin/zsh $USER && sudo usermod --shell /usr/bin/zsh root
 
 #---------------------------------
 
