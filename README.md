@@ -52,7 +52,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
    - [Autocomplete](https://github.com/marlonrichert/zsh-autocomplete)
    - [fzf](https://github.com/junegunn/fzf)
 
-7. Descargamos y añadimos las fuentes Meslo
+ 7. Descargamos y añadimos las fuentes [Meslo](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Meslo)
   
 8. Se modifican los archivos zshrc y p10k por los que se encuentran el la carpeta config del repositorio
   
