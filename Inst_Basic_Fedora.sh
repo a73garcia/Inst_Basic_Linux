@@ -35,7 +35,7 @@ sudo dnf update --refresh -y
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
-sudo dnf -y install git ksshaskpass wget kate feh p7zip locate lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepass keepassxc texlive texmaker powerline-fonts gnome-boxes code plexmediaserver
+sudo dnf install git ksshaskpass wget kate feh p7zip locate lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepass keepassxc texlive texmaker powerline-fonts gnome-boxes code plexmediaserver
 
 # Verificar actualizaciones
 echo -e "\033[31mVerificando actualizaciones...\033[0m"
