@@ -26,7 +26,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
 
 1. Actualizacion del SO
   
-2. Repositorio para instalación de Visual Studio Code y PlexServer en fedora, para Archlinux se utilizan las fuentes de los repositorios
+2. Instalación de Visual Studio Code y PlexServer. En Fedora se añaden los repositorios para su instalacion, para Archlinux se utilizan las fuentes de los repositorios de ARCH
   
 3. Se instalan las siguientes utilidades:
   
@@ -45,12 +45,12 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
   
 6. Añadimos Powerlevel10k y una colección pluguins para ZSH
 
-- [Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-- [Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-- [zsh-z](https://github.com/agkozak/zsh-z)
-- [Fast Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-- [Autocomplete](https://github.com/marlonrichert/zsh-autocomplete)
-- [fzf](https://github.com/junegunn/fzf)
+   - [Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+   - [Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
+   - [zsh-z](https://github.com/agkozak/zsh-z)
+   - [Fast Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+   - [Autocomplete](https://github.com/marlonrichert/zsh-autocomplete)
+   - [fzf](https://github.com/junegunn/fzf)
 
 7. Descargamos y añadimos las fuentes Meslo
   
