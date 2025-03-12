@@ -1,5 +1,5 @@
 #VMWare
-
+##Manjaro##
 
 
 
@@ -23,3 +23,20 @@ tar -cf vmmon.tar vmmon-only
 tar -cf vmnet.tar vmnet-only
 cp -v vmmon.tar vmnet.tar /usr/lib/vmware/modules/source/
 vmware-modconfig --console --install-all
+
+
+
+#Instalar VMWare
+
+sudo pacman -S dkms libxcrypt-compat
+cd /tmp/
+git clone https://aur.archlinux.org/vmware-keymaps.git
+cd vmware-keymaps
+makepkg -si
+
+cd ..
+git clone https://aur.archlinux.org/vmware-workstation.git
+cd vmware-workstation
+makepkg -si
+
+
