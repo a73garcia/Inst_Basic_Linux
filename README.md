@@ -40,7 +40,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux
             kate            gparted             qbittorrent         gnome-boxes
             feh             curl                putty               code
             p7zip           fastfetch           thunderbird         plexmediaserver
-            locate          kitty               keepass
+            locate          kitty               keepass             timeshift
             lsd             dolphin             keepassxc
             bat             gimp                texlive
 
