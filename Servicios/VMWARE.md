@@ -74,6 +74,8 @@ vmware
 
 Si tenemos problemas en la instalacion, ejecutar las siguientes instancias
 
+Opción 1
+
 ```bash
 TMP_FOLDER=/tmp/patch-vmware
 rm -fdr $TMP_FOLDER
