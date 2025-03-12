@@ -138,7 +138,7 @@ echo -e "
             kate            gparted             qbittorrent         gnome-boxes
             feh             curl                putty               code
             p7zip           fastfetch           thunderbird         plexmediaserver
-            locate          kitty               keepass
+            locate          kitty               timeshift
             lsd             dolphin             keepassxc
             bat             gimp                texlive\033[0m
 
