@@ -2,6 +2,19 @@
 
 Instalacion de VMWare Workstation en Fedora
 
+Determinar que paquetes de Kernels estan instalados
+
+```bash
+dnf list installed "kernel-*"
+```
+
+Ver el Kernel que se esta ejecutando
+
+```bash
+uname -r
+```
+
+
 1. Descargamos la aplicacion desde de la [pagina de Broadcom](https://support.broadcom.com/group/ecx/free-downloads)
 
 2. Check sha256sum
