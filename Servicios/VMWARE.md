@@ -72,6 +72,7 @@ vmware
 
 # Problemas de instalacion
 
+Si tenemos problemas en la instalacion, ejecutar las siguientes instancias
 
 ```bash
 TMP_FOLDER=/tmp/patch-vmware
@@ -85,7 +86,11 @@ cd vmware-host-modules/
 sudo make tarballs && sudo cp -v vmmon.tar vmnet.tar /usr/lib/vmware/modules/source/
 sudo vmware-modconfig --console --install-all
 ```
+Una vez ejecutada, reiniciamos el sistema
 
+```bash
+reboot
+```
 
 # Desistalación VMWare
 
