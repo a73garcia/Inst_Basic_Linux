@@ -16,26 +16,26 @@ sudo dnf upgrade --refresh -y
 
 # Añadir repositorio de Visual Studio Code
 echo -e "\033[31mAñadiendo repositorio de Visual Studio Code...\033[0m"
-##sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-##echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
 
 # Añadir repositorio de PlexServer
 echo -e "\033[31mAñadiendo el repositorio de Plex...\033[0m"
-#sudo tee /etc/yum.repos.d/plex.repo <<EOF
-#[Plexrepo]
-#name=plexrepo
-#baseurl=https://downloads.plex.tv/repo/rpm/\$basearch/
-#enabled=1
-#gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
-#gpgcheck=1
-#EOF
+sudo tee /etc/yum.repos.d/plex.repo <<EOF
+[Plexrepo]
+name=plexrepo
+baseurl=https://downloads.plex.tv/repo/rpm/\$basearch/
+enabled=1
+gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
+gpgcheck=1
+EOF
 
 echo -e "\033[31mActualizando los repositorios...\033[0m"
 sudo dnf update --refresh -y
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
-sudo dnf install git wget kate feh p7zip locate lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepassxc texlive texmaker powerline-fonts gnome-boxes code plexmediaserver
+sudo dnf install git wget kate feh p7zip locate lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepassxc texlive texmaker powerline-fonts gnome-boxes code plexmediaserver timeshift
 
 # Verificar actualizaciones
 echo -e "\033[31mVerificando actualizaciones...\033[0m"
