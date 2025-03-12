@@ -2,6 +2,11 @@
 
 Modificamos el Terminal para las distribuciones Fedora o ArchLinux con ZSH e instalamos una colección de paquetes basicos.
 
+# Habilitamos contraseña para el usuario root
+
+```bash
+sudo passwd root
+ ```
 
 # Script de configuracion
 
