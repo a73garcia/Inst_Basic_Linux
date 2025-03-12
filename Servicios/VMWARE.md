@@ -86,6 +86,7 @@ cd vmware-host-modules/
 sudo make tarballs && sudo cp -v vmmon.tar vmnet.tar /usr/lib/vmware/modules/source/
 sudo vmware-modconfig --console --install-all
 ```
+Opción 2
 
 ```bash
 wget https://github.com/mkubecek/vmware-host-modules/archive/player-15.5.2.tar.gz
@@ -96,7 +97,18 @@ tar --create --file vmnet.tar vmnet-only
 cp vm*.tar /usr/lib/vmware/modules/source/
 sudo vmware-modconfig --console --install-all
 ```
+Opción 3
 
+```bash
+wget --debug --inet4-only https://codeload.github.com/mkubecek/vmware-host-modules/tar.gz/refs/heads/workstation-17.5.1
+
+tar -zxvf workstation-17.5.1.tar.gz
+cd vmware-host-modules-workstation-17.5.1/
+tar -cf vmmon.tar vmmon-only
+tar -cf vmnet.tar vmnet-only
+sudo cp -v vmmon.tar vmnet.tar /usr/lib/vmware/modules/source/
+sudo vmware-modconfig --console --install-all
+```
 
 Una vez ejecutada, reiniciamos el sistema
 
