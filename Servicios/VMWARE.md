@@ -1,11 +1,15 @@
 # Instalacion VMWare
 
+## Revision kernel instalados
+
 Instalacion de VMWare Workstation en Fedora
 
 Determinar que paquetes de Kernels estan instalados
 
 ```bash
 dnf list installed "kernel-*"
+# or
+rpm -qa kernel
 ```
 
 Ver el Kernel que se esta ejecutando
@@ -14,6 +18,13 @@ Ver el Kernel que se esta ejecutando
 uname -r
 ```
 
+Eliminar kerner
+
+```bash
+sudo dnf remove kernel-4.0.4-301.fc22.x86_64
+```
+
+## Instalación de VMWare
 
 1. Descargamos la aplicacion desde de la [pagina de Broadcom](https://support.broadcom.com/group/ecx/free-downloads)
 
