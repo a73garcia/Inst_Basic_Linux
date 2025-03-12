@@ -55,6 +55,18 @@ dnf install kernel-devel kernel-headers gcc make patch wget
 9. Ejecutamos VMware
 
 ```bash
+reboot
+```
+
+10. Comprobamos estado del servicio
+
+```bash
+sudo systemctl status vmware
+```
+
+11. Ejecutamos VMware
+
+```bash
 vmware
 ```
 
