@@ -58,6 +58,23 @@ dnf install kernel-devel kernel-headers gcc make patch wget
 vmware
 ```
 
+# Problemas de instalacion
+
+
+```bash
+TMP_FOLDER=/tmp/patch-vmware
+rm -fdr $TMP_FOLDER
+mkdir -p $TMP_FOLDER
+cd $TMP_FOLDER
+
+
+git clone -b tmp/workstation-17.5.2-k6.9.1 https://github.com/nan0desu/vmware-host-modules.git
+cd vmware-host-modules/
+sudo make tarballs && sudo cp -v vmmon.tar vmnet.tar /usr/lib/vmware/modules/source/
+sudo vmware-modconfig --console --install-all
+```
+
+
 # Desistalación VMWare
 
 1. Change root user
