@@ -1,0 +1,23 @@
+# Descargar
+
+# Comprobbar SHA256
+sha256sum VMware-Workstation-Full-17.5.2-23775571.x86_64.bundle
+
+# Convertir en ejecutable
+chmod +x VMware-Workstation-Full-17.5.2-23775571.x86_64.bundle
+
+# Cambiar a root
+su
+
+# Actualizar sistema
+dnf update
+
+# Reiniciar sistema
+reboot
+
+# Instalar dependencias
+dnf install kernel-devel kernel-headers gcc make patch wget
+
+# Comenzar instalacion
+./VMware-Workstation-Full-17.5.2-23775571.x86_64.bundle
+
