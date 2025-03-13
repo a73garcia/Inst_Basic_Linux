@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#----------------------------------------------------
+
 echo -e "\033[33mConfiguración inicial del terminal e instalación de paquetes basicos en SO basados en \033[1m\033[4m\033[32mArch\033[0m\033[0m"
 
 #Eliminacion de configuraciones previas
@@ -11,19 +13,26 @@ echo -e "\033[31mActualizando sistema...\033[0m"
 
 sudo pacman -Syuu
 
+# Solucionar problemas con make
 pamac install base-devel
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
 sudo pacman -S git wget kate feh p7zip locate yay lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepassxc texlive texmaker powerline-fonts gnome-boxes zsh vscode
 
+# Instalar Plex
+echo -e "\033[31mInstalando Plex Server...\033[0m"
 yay -S plex-media-server
 
+# Instalar Media Writer
+echo -e "\033[31mInstalando Media Writer...\033[0m"
 cd /tmp/
 git clone https://aur.archlinux.org/mediawriter.git
 cd mediawriter/
 makepkg -si
 cd
+
+#----------------------------------------------------
 
 # Instalar ohmyzsh
 echo -e "\033[31mInstalando Oh My Zsh...\033[0m"
@@ -56,7 +65,7 @@ echo -e "\033[31mCopiando configuraciones personalizadas zshrc y p10k del reposi
 curl -o /home/$USER/.zshrc https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/zshrc
 curl -o /home/$USER/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/p10k.zsh
 
-#---------------------------------
+#----------------------------------------------------
 
 # Instalamos ZSH en Root
 echo -e "\033[31mInstalamos ZSH en Root...\033[0m"
@@ -84,7 +93,7 @@ echo -e "\033[31mCopiando configuraciones personalizadas zshrc y p10k...\033[0m"
 sudo curl -o /root/.zshrc https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/zshrc
 sudo curl -o /root/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/p10k.zsh
 
-#---------------------------------
+#----------------------------------------------------
 
 # Eliminamos archivos duplicados
 echo -e "\033[Eliminamos archivos duplicados de zsh...\033[0m"
@@ -94,7 +103,7 @@ sudo rm -r /home/$USER/.zshrc.pre* /root/.zshrc.pre* /home/$USER/.z /root/.z
 echo -e "\033[31mCambiando el shell a Zsh...\033[0m"
 sudo usermod --shell /usr/bin/zsh $USER && sudo usermod --shell /usr/bin/zsh root
 
-#---------------------------------
+#----------------------------------------------------
 
 clear
 
