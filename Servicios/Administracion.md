@@ -3,7 +3,8 @@
 ### Cambiar propietario de archivo o carpeta
 
 ```bash
-#Cambia el propietario del archivo o carpeta (usamos -R para cambiar el propietario tambien de las subcarpetas y archivos contenidos dentro de la carpeta)
+#Cambia el propietario del archivo o carpeta
+#Para cambiar tambien el propietario del contenidos dentro de la carpeta usamos -R
 sudo chown -R $USER:$USER archivo
 ```
 
