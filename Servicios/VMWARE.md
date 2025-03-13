@@ -82,10 +82,38 @@ dnf install kernel-devel kernel-headers gcc make patch wget
 reboot
 ```
 
-10. Comprobamos estado del servicio
+10. Levantar,parar, restablecer o comprobar el estado del servicio
+
+Iniciar el servicio
+
+```bash
+sudo systemctl start vmware
+#or
+sudo systemctl start vmware.service
+```
+
+Parar el servicio
+
+```bash
+sudo systemctl stop vmware
+#or
+sudo systemctl stop vmware.service
+```
+
+Restablecer el servicio
+
+```bash
+sudo systemctl restart vmware
+#or
+sudo systemctl restart vmware.service
+```
+
+Comprobar el servicio
 
 ```bash
 sudo systemctl status vmware
+#or
+sudo systemctl status vmware.service
 ```
 
 11. Ejecutamos VMware
