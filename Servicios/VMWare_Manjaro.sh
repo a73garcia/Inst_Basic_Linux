@@ -1,7 +1,30 @@
-#VMWare
-##Manjaro##
+# VMWare
+
+## Manjaro
 
 
+
+
+I also check this vmware service is the one only service failed on boot
+
+sudo systemctl list-units --state=failed
+
+but vmmon and vmnet successfully installed
+
+vmware-modconfig --console --install-status
+
+This is the result from journalctl -xeu
+
+sudo journalctl -xeu vmware.service
+
+
+dmesg | grep -iE 'secure|vmmon'
+
+
+
+
+
+## Arch
 
 pacman -S linux-headers
 
