@@ -38,7 +38,7 @@ reboot
 
 1. Actualizacion del SO
   
-2. Instalación de Visual Studio Code y PlexServer. En Fedora se añaden los repositorios para su instalacion, para Archlinux se utilizan las fuentes de los repositorios de ARCH
+2. Instalación del repositorio de Visual Studio Code. En Fedora se añaden los repositorios para su instalacion, para Archlinux se utilizan las fuentes de los repositorios de ARCH
   
 3. Se instalan las siguientes utilidades:
   
@@ -46,7 +46,7 @@ reboot
             wget            neovim              hexchat             powerline-fonts
             kate            gparted             qbittorrent         gnome-boxes
             feh             curl                putty               code
-            p7zip           fastfetch           thunderbird         plexmediaserver
+            p7zip           fastfetch           thunderbird
             locate          kitty               timeshift
             lsd             dolphin             keepassxc
             bat             gimp                texlive
