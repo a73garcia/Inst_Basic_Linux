@@ -4,10 +4,6 @@
 
 echo -e "\033[33mConfiguración inicial del terminal e instalación de paquetes basicos en SO basados en \033[1m\033[4m\033[32mArch\033[0m\033[0m"
 
-#Eliminacion de configuraciones previas
-#Activar solo si es necesario
-# sudo rm -r /root/.oh-my-zsh /root/.zshrc ~/.local/share/fonts/meslolg /root/.fzf /root/.fzf.zsh /root/.fzf.bash /root/.shell.pre-oh-my-zsh /home/gh0stwalk3r/.oh-my-zsh
-
 # Actualizar paquetes y refrescar metadatos
 echo -e "\033[31mActualizando sistema...\033[0m"
 
@@ -20,12 +16,8 @@ pamac install base-devel
 echo -e "\033[31mInstalando paquetes...\033[0m"
 sudo pacman -S git wget kate feh p7zip locate yay lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepassxc texlive texmaker powerline-fonts gnome-boxes zsh vscode
 
-# Instalar Plex
-echo -e "\033[31mInstalando Plex Server...\033[0m"
-yay -S plex-media-server
-
 # Instalar Media Writer
-echo -e "\033[31mInstalando Media Writer...\033[0m"
+echo -e "\033[31mInstalando MediaWriter...\033[0m"
 cd /tmp/
 git clone https://aur.archlinux.org/mediawriter.git
 cd mediawriter/
