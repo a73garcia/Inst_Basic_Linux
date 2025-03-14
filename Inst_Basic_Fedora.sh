@@ -30,8 +30,8 @@ gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
 gpgcheck=1
 EOF
 
-echo -e "\033[31mActualizando los repositorios...\033[0m"
-sudo dnf update --refresh -y
+#echo -e "\033[31mActualizando los repositorios...\033[0m"
+#sudo dnf update --refresh -y
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
