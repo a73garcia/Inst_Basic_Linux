@@ -1,46 +1,51 @@
 #!/bin/bash
 
-echo -e "\033[33m
-Configuración de \033[1m\033[4m\033[32mPlex\033[0m
+#----------------------------------------------------
 
-\033[0m"
+echo -e "\033[33mInstalar\033[1m\033[4m\033[32mPlexServer\033[0m\033[0m en ArchLinux"
 
-#Eliminacion de configuraciones previas
-#Activar solo si es necesario
-# sudo rm -r /root/.oh-my-zsh /root/.zshrc ~/.local/share/fonts/meslolg /root/.fzf /root/.fzf.zsh /root/.fzf.bash /root/.shell.pre-oh-my-zsh /home/gh0stwalk3r/.oh-my-zsh
+# Instalar Plex
+echo -e "\033[31mInstalando Plex Server...\033[0m"
+yay -S plex-media-server
 
-# Añadir repositorio de PlexServer
-echo -e "\033[31mAñadiendo repositorio de PlexServer...\033[0m"
-sudo tee /etc/yum.repos.d/plex.repo <<EOF
-[Plexrepo]
-name=plexrepo
-baseurl=https://downloads.plex.tv/repo/rpm/\$basearch/
-enabled=1
-gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
-gpgcheck=1
-EOF
 
-# Instalar paquetes necesarios
-echo -e "\033[31mInstalando paquetes...\033[0m"
-sudo dnf install plexmediaserver
+#----------------------------------------------------
 
-# Iniciar el servicio de Plex
-#echo "\033[31mIniciando Plex Media Server y habilitando dn el arranque...\033[0m"
-#sudo systemctl start plexmediaserver
-#sudo systemctl enable plexmediaserver
-
-# Comprobar el estado del servicio
-echo -e "\033[31mComprobando el estado de Plex Media Server...\03q3[0m"
-sudo systemctl status plexmediaserver
-
+clear
 
 echo -e "
 
+\033[1m\033[4m\033[33mInstalacion finalizada correctamente\033[0m
 
-\033[1m\033[4m\033[33mLa instalacion de PlexServer ha finalizado PlexServer\033[0m
+\033[1m\033[32mResumen de la instalacion:\033[0m
 
-La URL del servicio es:
+- Se ha actualizado SO
+- Se han instalado los siguientes paquetes:\033[1m\033[33m
 
-        \033[1m\033[33mhttp://localhost:32400/web\033[0m
+            git             net-tools           inkscape            texmaker
+            wget            neovim              hexchat             powerline-fonts
+            kate            gparted             qbittorrent         gnome-boxes
+            feh             curl                putty               vscode
+            p7zip           fastfetch           thunderbird         plex-media-server
+            locate          kitty               keepass             zsh
+            lsd             dolphin             keepassxc           MediaWriter
+            bat             gimp                texlive\033[0m
+
+- Se ha verificado actualizaciones
+- Se ha cambiado la Shell a ZSH para el Usuario y Root
+- Se ha añadido Powerlevel10k y añadido los plugins para ZSH en Usuario y Root\033[1m\033[33m
+
+            Syntax Highlighting
+            Autosuggestions
+            zsh-z
+            Fast Syntax Highlighting
+            Autocomplete
+            fzf\033[0m
+
+- Se ha descargado y configurando las fuentes Meslo
+- Se han copiando configuraciones personalizadas zshrc y p10k
+- Se levanta el servicio PlexServer
+
+        URL: \033[1m\033[33mhttp://localhost:32400/web\033[0m
 
 "
