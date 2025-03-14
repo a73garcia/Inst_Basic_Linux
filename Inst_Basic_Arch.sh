@@ -57,6 +57,10 @@ echo -e "\033[31mCopiando configuraciones personalizadas zshrc y p10k del reposi
 curl -o /home/$USER/.zshrc https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/zshrc
 curl -o /home/$USER/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/p10k.zsh
 
+mkdir .config/kitty
+curl -o /home/$USER/.config/kitty/color.ini https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/kitty/color.ini
+curl -o /home/$USER/.config/kitty/kitty.conf https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/kitty/kitty.conf
+
 #----------------------------------------------------
 
 # Instalamos ZSH en Root
