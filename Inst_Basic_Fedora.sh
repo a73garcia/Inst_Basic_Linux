@@ -12,15 +12,11 @@ Configuración inicial del terminal e instalación de paquetes basicos despues d
 # Actualizar paquetes y refrescar metadatos
 echo -e "\033[31mActualizando sistema...\033[0m"
 
-sudo dnf upgrade --refresh -y
-
 # Añadir repositorio de Visual Studio Code
-echo -e "\033[31mAñadiendo repositorio de Visual Studio Code...\033[0m"
+echo -e "\033[31mAñadiendo repositorio de Visual Studio Code y PlexServer...\033[0m"
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
 
-# Añadir repositorio de PlexServer
-echo -e "\033[31mAñadiendo el repositorio de Plex...\033[0m"
 sudo tee /etc/yum.repos.d/plex.repo <<EOF
 [Plexrepo]
 name=plexrepo
@@ -30,8 +26,8 @@ gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
 gpgcheck=1
 EOF
 
-#echo -e "\033[31mActualizando los repositorios...\033[0m"
-#sudo dnf update --refresh -y
+echo -e "\033[31mActualizando los repositorios...\033[0m"
+sudo dnf update --refresh -y
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
