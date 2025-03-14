@@ -5,10 +5,6 @@ Configuración inicial del terminal e instalación de paquetes basicos despues d
 
 \033[0m"
 
-#Eliminacion de configuraciones previas
-#Activar solo si es necesario
-# sudo rm -r /root/.oh-my-zsh /root/.zshrc ~/.local/share/fonts/meslolg /root/.fzf /root/.fzf.zsh /root/.fzf.bash /root/.shell.pre-oh-my-zsh /home/gh0stwalk3r/.oh-my-zsh
-
 # Actualizar paquetes y refrescar metadatos
 echo -e "\033[31mActualizando sistema...\033[0m"
 
@@ -16,15 +12,6 @@ echo -e "\033[31mActualizando sistema...\033[0m"
 echo -e "\033[31mAñadiendo repositorio de Visual Studio Code y PlexServer...\033[0m"
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
-
-sudo tee /etc/yum.repos.d/plex.repo <<EOF
-[Plexrepo]
-name=plexrepo
-baseurl=https://downloads.plex.tv/repo/rpm/\$basearch/
-enabled=1
-gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
-gpgcheck=1
-EOF
 
 echo -e "\033[31mActualizando los repositorios...\033[0m"
 sudo dnf update --refresh -y
@@ -107,15 +94,6 @@ sudo curl -o /root/.zshrc https://raw.githubusercontent.com/a73garcia/Inst_Basic
 sudo curl -o /root/.p10k.zsh https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Config/p10k.zsh
 
 sudo rm -r /home/$USER/.zshrc.pre* /root/.zshrc.pre* /home/$USER/.z /root/.z
-
-# Iniciar el servicio de Plex
-#echo "\033[31mIniciando Plex Media Server y habilitando dn el arranque...\033[0m"
-#sudo systemctl start plexmediaserver
-#sudo systemctl enable plexmediaserver
-
-# Comprobar el estado del servicio
-echo -e "\033[31mComprobando el estado de Plex Media Server...\03q3[0m"
-sudo systemctl status plexmediaserver
 
 clear
 
