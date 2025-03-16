@@ -12,27 +12,6 @@ sudo pacman -Syuu
 # Solucionar problemas con make
 pamac install base-devel
 
-# Instalar VMWare
-cd /tmp/
-git clone https://aur.archlinux.org/paru-bin
-cd paru-bin/
-makepkg -si
-
-sudo pacman -S fuse2 gtkmm linux-headers pcsclite libcanberra
-paru -S --noconfirm --needed ncurses5-compat-libs
-paru -S --noconfirm --needed  vmware-workstation
-
-sudo systemctl enable vmware-networks.service vmware-usbarbitrator.service vmware-networks-configuration.service
-sudo systemctl start vmware-networks.service vmware-usbarbitrator.service vmware-networks-configuration.service
-
-sudo systemctl status vmware-networks.service vmware-usbarbitrator.service vmware-networks-configuration.service
-
-#vmware-networks-configuration.service first to generate /etc/vmware/networking
-#vmware-networks.service for guest network access (otherwise you will get an error could no connect 'ethernet 0' to virtual network and you will not be able to use vmware-netcfg)
-#vmware-usbarbitrator.service for connecting USB devices to guest
-
-sudo modprobe -a vmw_vmci vmmon
-
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
 sudo pacman -S git wget kate feh p7zip locate yay lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepassxc texlive texmaker powerline-fonts gnome-boxes zsh vscode
@@ -44,19 +23,6 @@ git clone https://aur.archlinux.org/mediawriter.git
 cd mediawriter/
 makepkg -si
 cd
-
-# Instalar Plex
-echo -e "\033[31mInstalando Plex Server...\033[0m"
-yay -S plex-media-server
-
-# Iniciar el servicio de Plex
-echo "\033[31mIniciando Plex Media Server y habilitando dn el arranque...\033[0m"
-sudo systemctl start plexmediaserver
-sudo systemctl enable plexmediaserver
-
-# Comprobar el estado del servicio
-echo -e "\033[31mComprobando el estado de Plex Media Server...\03q3[0m"
-sudo systemctl status plexmediaserver
 
 #----------------------------------------------------
 
