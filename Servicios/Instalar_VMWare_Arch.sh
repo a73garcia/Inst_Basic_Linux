@@ -32,4 +32,10 @@ sudo systemctl status vmware-networks-configuration.service
 
 sudo modprobe -a vmw_vmci vmmon
 
+#VM-Tools
+sudo /usr/bin/vmware-uninstall-tools.pl
+sudo pacman -S open-vm-tools
+
+reboot
+
 vmware
