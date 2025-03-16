@@ -12,6 +12,40 @@ sudo pacman -Syuu
 # Solucionar problemas con make
 pamac install base-devel
 
+# Instalar VMWare
+#echo -e "\033[31mInstalando VMWare...\033[0m"
+#cd /tmp/
+#sudo pacman -S dkms gtkmm3 libxcrypt-compat
+#git clone https://aur.archlinux.org/vmware-keymaps.git 
+#cd vmware-keymaps/
+#makepkg -si
+#cd..
+#git clone https://aur.archlinux.org/vmware-workstation.git 
+#cd vmware-workstation/
+#makepkg -si
+
+#first to generate /etc/vmware/networking
+#sudo systemctl start vmware-networks-configuration.service
+#sudo systemctl enable vmware-networks-configuration.service
+#sudo systemctl status vmware-networks-configuration.service
+
+#for guest network access (otherwise you will get an error could no connect 'ethernet 0' to virtual network and you will not be able to use vmware-netcfg)
+#sudo systemctl start vmware-networks.service
+#sudo systemctl enable vmware-networks.service
+#sudo systemctl status vmware-networks.service
+
+#for connecting USB devices to guest
+#sudo systemctl start vmware-usbarbitrator.service
+#sudo systemctl enable vmware-usbarbitrator.service
+#sudo systemctl status vmware-usbarbitrator.service
+
+#for sharing virtual machines (not available since version 16)
+#sudo systemctl start vmware-hostd.service
+#sudo systemctl enable vmware-hostd.service
+#sudo systemctl status vmware-hostd.service
+
+sudo modprobe -a vmw_vmci vmmon
+
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
 sudo pacman -S git wget kate feh p7zip locate yay lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepassxc texlive texmaker powerline-fonts gnome-boxes zsh vscode
