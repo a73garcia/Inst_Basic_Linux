@@ -13,7 +13,6 @@ sudo pacman -Syuu
 pamac install base-devel
 
 # Instalar VMWare
-
 cd /tmp/
 git clone https://aur.archlinux.org/paru-bin
 cd paru-bin/
@@ -28,11 +27,11 @@ sudo systemctl start vmware-networks.service  vmware-usbarbitrator.service vmwar
 
 sudo systemctl status vmware-networks.service  vmware-usbarbitrator.service 
 
-sudo modprobe -a vmw_vmci vmmon
-
 #vmware-networks-configuration.service first to generate /etc/vmware/networking
 #vmware-networks.service for guest network access (otherwise you will get an error could no connect 'ethernet 0' to virtual network and you will not be able to use vmware-netcfg)
 #vmware-usbarbitrator.service for connecting USB devices to guest
+
+sudo modprobe -a vmw_vmci vmmon
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
@@ -45,6 +44,19 @@ git clone https://aur.archlinux.org/mediawriter.git
 cd mediawriter/
 makepkg -si
 cd
+
+# Instalar Plex
+echo -e "\033[31mInstalando Plex Server...\033[0m"
+yay -S plex-media-server
+
+# Iniciar el servicio de Plex
+echo "\033[31mIniciando Plex Media Server y habilitando dn el arranque...\033[0m"
+sudo systemctl start plexmediaserver
+sudo systemctl enable plexmediaserver
+
+# Comprobar el estado del servicio
+echo -e "\033[31mComprobando el estado de Plex Media Server...\03q3[0m"
+sudo systemctl status plexmediaserver
 
 #----------------------------------------------------
 
