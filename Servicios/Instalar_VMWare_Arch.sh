@@ -1,4 +1,4 @@
-# Instalar VMWare WorkStation
+# VMWare WorkStation
 
 # Instalar VMWare
 cd /tmp/
