@@ -43,7 +43,7 @@ git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ${Z
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 
-# Descargar y configurar las fuentes Meslo
+# Descargar y configurar las fuentes Meslo 
 echo -e "\033[31mDescargando y configurando las fuentes Meslo...\033[0m"
 cd /tmp/
 wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Meslo.zip
