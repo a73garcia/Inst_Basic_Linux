@@ -26,13 +26,6 @@ systemctl enable sddm.service --force
 systemctl reboot
  ```
 
-Optional: Install the Manjaro configuration and theming for plasma
-
-```bash
-systemctl enable sddm.service --force
-systemctl reboot
- ```
-
 sudo pacman -S manjaro-kde-settings sddm-breath-theme manjaro-settings-manager
 
 Open plasma settings, go to Startup & Shutdown->Login Screen and select "Breath"
