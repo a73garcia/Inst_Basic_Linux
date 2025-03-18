@@ -21,3 +21,10 @@ Primer número para el usuario, segundo para el grupo y el tercero para otros
 ```bash
 chmod 744 archivo
 ```
+
+### Impresoras HP
+
+```bash
+sudo pacman -S print-manager system-config-printer
+$ sudo pacman -S hplip
+```
