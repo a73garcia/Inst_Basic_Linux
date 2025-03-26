@@ -46,10 +46,10 @@ reboot
             wget            neovim              hexchat             powerline-fonts
             kate            gparted             qbittorrent         gnome-boxes
             feh             curl                putty               code
-            p7zip           fastfetch           thunderbird
-            locate          kitty               timeshift
-            lsd             dolphin             keepassxc
-            bat             gimp                texlive
+            p7zip           fastfetch           thunderbird         yt-dlp
+            locate          kitty               timeshift           gdisk
+            lsd             dolphin             keepassxc           testdisk
+            bat             gimp                texlive             yay (Arch)
 
 4. Se realiza una verificación de nuevas actualizaciones después de la intalación de la utilidades
   
