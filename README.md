@@ -26,15 +26,6 @@ Ejecutar desde el terminal:
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Inst_Basic_Arch.sh)"
  ```
 
-### En OpenSUSE
-
-Ejecutar desde el terminal:
-
-```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/a73garcia/Inst_Basic_Linux/refs/heads/main/Inst_Basic_OpenSUSE.sh)"
- ```
-
-
 ## Después de la instalación
 
 Una vez finalizada la actualización e instalación de los paquetes básicos, reiniciamos el equipo
