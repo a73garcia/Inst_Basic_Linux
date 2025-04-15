@@ -58,5 +58,7 @@ Configurados 3 portapapeles
 > Paste F2 - F4 - F6
 
 
+### Mas información sobre configuración Kitty
 
+[Overview Kitty](https://sw.kovidgoyal.net/kitty/overview/)
 
