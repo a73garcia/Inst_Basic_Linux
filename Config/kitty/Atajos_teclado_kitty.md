@@ -34,7 +34,7 @@ Desplazarse entre las distintas ventanas abiertas
 
 > Ctrl+Shift+(] or [)
 
-> [!TIP]
+> [!NOTE]
 > ] Avanzar\
 > [ Retroceder
 
@@ -42,7 +42,7 @@ Mover la ventana actuar
 
 > Ctrl+Shift+(F or B)
 
-> [!TIP]
+> [!NOTE]
 > F Avanzar\
 > B Retroceder
 
