@@ -50,3 +50,13 @@ Intercambiar presentacion de las pestañas
 
 > Crtl+Shift+L
 
+### Copiado y pegado
+
+Configurados 3 portapapeles
+
+> Copy  F1 - F3 - F5\
+> Paste F2 - F4 - F6
+
+
+
+
