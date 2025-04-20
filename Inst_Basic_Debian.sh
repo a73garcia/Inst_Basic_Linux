@@ -13,7 +13,6 @@ sudo apt-get dist-upgrade
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
-sudo pacman -S git wget kate feh p7zip locate yay lsd bat net-tools neovim gparted curl fastfetch kitty dolphin gimp inkscape hexchat qbittorrent putty thunderbird keepassxc texlive texmaker powerline-fonts gnome-boxes zsh vscode yt-dlp gdisk testdisk
 sudo apt-get install git wget kate feh p7zip locate lsd bat net-tools neovim gparted curl kitty dolphin hexchat qbittorrent putty thunderbird keepassxc texlive texmaker gnome-boxes zsh yt-dlp gdisk
 
 # NO INSTALADOS yay fastfetch gimp inkscape powerline-fonts vscode testdisk
