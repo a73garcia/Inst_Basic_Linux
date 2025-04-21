@@ -18,12 +18,12 @@ sudo apt-get install git wget kate feh p7zip locate lsd bat net-tools neovim gpa
 # NO INSTALADOS yay fastfetch gimp inkscape powerline-fonts vscode testdisk
 
 # Instalar Media Writer
-echo -e "\033[31mInstalando MediaWriter...\033[0m"
-cd /tmp/
-git clone https://aur.archlinux.org/mediawriter.git
-cd mediawriter/
-makepkg -si
-cd
+# echo -e "\033[31mInstalando MediaWriter...\033[0m"
+# cd /tmp/
+# git clone https://aur.archlinux.org/mediawriter.git
+# cd mediawriter/
+# makepkg -si
+# cd
 
 #----------------------------------------------------
 
