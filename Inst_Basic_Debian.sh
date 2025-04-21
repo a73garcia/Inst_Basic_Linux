@@ -17,6 +17,14 @@ sudo apt-get install git wget kate feh p7zip locate lsd bat net-tools neovim gpa
 
 # NO INSTALADOS yay fastfetch gimp inkscape powerline-fonts vscode testdisk
 
+# Instalar paquetes visual studio
+echo -e "\033[31mInstalando Visual Studio Code...\033[0m"
+sudo apt install software-properties-common apt-transport-https
+sudo wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+sudo apt update
+sudo apt install code
+
 # Instalar Media Writer
 # echo -e "\033[31mInstalando MediaWriter...\033[0m"
 # cd /tmp/
