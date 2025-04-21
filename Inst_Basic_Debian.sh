@@ -13,9 +13,9 @@ sudo apt-get dist-upgrade
 
 # Instalar paquetes necesarios
 echo -e "\033[31mInstalando paquetes...\033[0m"
-sudo apt-get install git wget kate feh p7zip locate lsd bat net-tools neovim gparted curl kitty dolphin hexchat qbittorrent putty thunderbird keepassxc texlive texmaker gnome-boxes zsh yt-dlp gdisk
+sudo apt-get install git wget kate feh p7zip locate lsd bat net-tools neovim gparted curl kitty dolphin hexchat qbittorrent putty thunderbird keepassxc texlive texmaker gnome-boxes zsh yt-dlp gdisk fonts-powerline
 
-# NO INSTALADOS yay fastfetch gimp inkscape powerline-fonts vscode testdisk
+# NO INSTALADOS fastfetch gimp inkscape testdisk
 
 # Instalar paquetes visual studio
 echo -e "\033[31mInstalando Visual Studio Code...\033[0m"
@@ -25,7 +25,7 @@ sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/v
 sudo apt update
 sudo apt install code
 
-# Instalar Media Writer
+# Instalar Media Writer 
 # echo -e "\033[31mInstalando MediaWriter...\033[0m"
 # cd /tmp/
 # git clone https://aur.archlinux.org/mediawriter.git
