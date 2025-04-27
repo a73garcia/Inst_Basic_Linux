@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual CLI CES</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; color: #333; }
+    h1, h2, h3 { color: #2c3e50; }
+    .terminal { background-color: #2d2d2d; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', Courier, monospace; margin: 15px 0; white-space: pre-wrap; }
+    .log { background-color: #1e1e1e; color: #cccccc; padding: 15px; border-radius: 5px; font-family: 'Courier New', Courier, monospace; margin: 10px 0; white-space: pre-wrap; }
+    nav { margin-bottom: 30px; background-color: #ffffff; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    nav a { margin-right: 15px; text-decoration: none; color: #3498db; }
+  </style>
+</head>
+<body>
+
+<h1>Manual CLI CES</h1>
+
+<h2 id="acceso">1. Acceso a la CLI</h2>
+<div class="terminal">ssh admin@192.168.1.100</div>
+<p>Este comando te permite acceder a la CLI de tu Cisco ESA a través de SSH. Recuerda reemplazar la IP con la dirección correspondiente a tu servidor.</p>
+
+<h2 id="tracking">2. Comandos Básicos de Tracking</h2>
+<h3>2.1 Buscar correos por remitente o destinatario</h3>
+<div class="terminal">grep "user@example.com" /var/log/mail.*</div>
+<div class="log">/var/log/mail.log: Apr 27 13:45:12 mailserver sendmail[12345]: from=&lt;user@example.com&gt;, to=&lt;admin@company.com&gt;, subject="Meeting Request", status=sent
+/var/log/mail.log: Apr 27 14:05:30 mailserver sendmail[12346]: from=&lt;user@example.com&gt;, to=&lt;support@company.com&gt;, subject="Issue with login", status=sent</div>
+<p>Este comando busca todas las apariciones de una dirección específica en los archivos de log.</p>
+
+<h3>2.2 Buscar por ID de mensaje (MID)</h3>
+<div class="terminal">grep "MID 987654" /var/log/mail.*</div>
+<div class="log">/var/log/mail.log: Apr 27 14:15:12 mailserver sendmail[12347]: MID 987654, from=&lt;user@example.com&gt;, to=&lt;admin@company.com&gt;, status=delivered</div>
+<p>Permite rastrear un correo específico a través de su MID.</p>
+
+<h3>2.3 Buscar por Message-ID (header)</h3>
+<div class="terminal">grep "&lt;5f3b9f6e.1234@example.com&gt;" /var/log/mail.*</div>
+<div class="log">/var/log/mail.log: Apr 27 14:25:50 mailserver sendmail[12348]: Message-ID: &lt;5f3b9f6e.1234@example.com&gt;, status=delivered</div>
+
+<h3>2.4 Buscar por dirección IP de conexión</h3>
+<div class="terminal">grep "Connecting host 192.168.0.10" /var/log/mail.*</div>
+<div class="log">/var/log/mail.log: Apr 27 14:30:00 mailserver sendmail[12349]: Connecting host 192.168.0.10, status=accepted</div>
+
+<h2 id="avanzadas">3. Técnicas Avanzadas de Tracking</h2>
+<h3>3.1 Buscar mensajes rechazados o droppeados</h3>
+<div class="terminal">grep "reject" /var/log/mail.*</div>
+<div class="log">/var/log/mail.log: Apr 27 15:00:00 mailserver sendmail[12350]: reject: spam detected, from=&lt;user@example.com&gt;, to=&lt;admin@company.com&gt;</div>
+
+<h3>3.2 Rastrear todo el flujo de un correo</h3>
+<div class="terminal">trackingshow &lt;MID&gt;</div>
+<div class="log">Tracking ID: MID123456
+- Delivered to admin@company.com
+- Accepted by recipient mail server
+- No errors encountered</div>
+
+<h3>3.3 Uso de Wildcards y Pipes</h3>
+<div class="terminal">grep "user*" /var/log/mail.* | grep "sent"</div>
+<div class="log">/var/log/mail.log: Apr 27 13:45:12 mailserver sendmail[12345]: from=&lt;user@example.com&gt;, to=&lt;admin@company.com&gt;, subject="Meeting Request", status=sent</div>
+
+<h2 id="commits">4. Gestión y Análisis de Commits</h2>
+<h3>4.1 Ver los commits realizados</h3>
+<div class="terminal">commitlist</div>
+<div class="log">Commit ID 1: Changes to email filtering policies. Date: Apr 25, 2025, Author: admin
+Commit ID 2: Updates to DKIM configuration. Date: Apr 26, 2025, Author: security_admin
+Commit ID 3: Modified inbound mail filtering rules. Date: Apr 27, 2025, Author: sys_admin</div>
+<p>Este comando muestra la lista de commits realizados en el sistema.</p>
+
+<h3>4.2 Ver detalles de un commit específico</h3>
+<div class="terminal">commitshow &lt;commit_id&gt;</div>
+<div class="log">Commit ID 3:
+- Modified content filter policy to allow attachments from trusted senders.
+- Updated inbound mail filtering rules.
+- Adjusted sender reputation policies.
+Author: sys_admin</div>
+<p>Visualiza los detalles de un commit específico.</p>
+
+<h3>4.3 Buscar cambios que afecten tracking</h3>
+<div class="terminal">commitshow 3</div>
+<div class="log">Commit ID 3 - Changes affecting tracking:
+- Updated spam filter threshold.
+- Allowed attachments from trusted senders.
+- Updated sender reputation handling.</div>
+<p>Consulta qué cambios realizados afectan el tracking de correos.</p>
+
+<h3>4.4 Revertir un commit</h3>
+<div class="terminal">rollback &lt;commit_id&gt;</div>
+<div class="log">Rollback successful: Commit ID 3 reverted.</div>
+<p>Revierte el sistema a la configuración previa a un commit específico.</p>
+
+<h3>4.5 Quién realiza los commits</h3>
+<p>Los commits se registran con el usuario que ejecutó los cambios, mostrado en <code>commitlist</code> y <code>commitshow</code>.</p>
+
+<h3>4.6 Diferencias entre antes y después de un commit</h3>
+<div class="terminal">commitdiff &lt;commit_id&gt; &lt;previous_commit_id&gt;</div>
+<div class="log">Changes between Commit ID 3 and Commit ID 2:
+- Spam filter threshold changed from 5 to 10
+- Trusted senders list updated
+- Sender reputation policy adjusted</div>
+<p>Muestra las diferencias entre dos commits consecutivos.</p>
+
+<h2 id="avanzadas">5. Busquedas avanzadas con grep</h2>
+<h3>5.1 Sender, numero de correos y total de bytes</h3>
+<div class="terminal">reportquery mail_logs -s "2025-04-25 00:00:00" -e "2025-04-26 23:59:59" -g sender -c | sort -k2 -nr | head -n 20</div>
+<div class="log">Sender Address          Message Count      Total Bytes
+---------------------   --------------     -----------
+noreply@empresa.com     5200               145000000
+info@otrodominio.com    4200               127000000
+...
+</div>
+
+<h3>5.2 Recipient, numero de correos y total de bytes</h3>
+<div class="terminal">reportquery mail_logs -s "2025-04-25 00:00:00" -e "2025-04-26 23:59:59" -g sender -c | sort -k2 -nr | head -n 20</div>
+<div class="log">Recipient Address         Message Count      Total Bytes
+---------------------     --------------     -----------
+usuario1@tuempresa.com    5300               98000000
+usuario2@tuempresa.com    4200               85000000
+...
+</div>
+
+<h3>5.3 Subject, numero de correos y total de bytes</h3>
+<div class="terminal">reportquery mail_logs -s "2025-04-25 00:00:00" -e "2025-04-26 23:59:59" -g sender -c | sort -k2 -nr | head -n 20</div>
+<div class="log">Subject                                Message Count    Total Bytes
+-----------------------------------    -------------    ------------
+"Factura Abril 2025"                   1200             45000000
+"Reporte Semanal de Ventas"             900             38000000
+"Notificación de Seguridad"             700             27000000
+...
+</div>
+
+
+<h2 id="dmarc">5. Explicación de DMARC, DKIM y SPF</h2>
+<h3>5.1 DMARC</h3>
+<p>DMARC (Domain-based Message Authentication, Reporting and Conformance) define cómo los correos deben ser autenticados utilizando SPF y DKIM.</p>
+<div class="log">DMARC Report: domain example.com
+- 95% passed SPF
+- 92% passed DKIM
+- 3% failed DMARC</div>
+
+<h3>5.2 DKIM</h3>
+<p>DKIM (DomainKeys Identified Mail) añade una firma criptográfica a los correos electrónicos, verificando su integridad y autenticidad.</p>
+
+<h3>5.3 SPF</h3>
+<p>SPF (Sender Policy Framework) permite a los propietarios de dominios especificar qué servidores están autorizados a enviar correos en su nombre.</p>
+
+</body>
+</html>
