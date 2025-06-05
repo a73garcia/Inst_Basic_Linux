@@ -1,106 +1,18 @@
-import os
-import pandas as pd
-from datetime import date
-from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
 
-# Ruta de los archivos CSV
-carpeta = './'
+# Cargar el archivo Excel
+archivo = "Informe_mensual.xlsx"
+wb = load_workbook(archivo)
+hoja = wb["Datos"]
 
-fecha_mes_anterior = (date.today().replace(day=1) - relativedelta(months=1)).strftime("%d/%m/%Y")  # Fecha del mes con día 1
+# Recorrer las filas desde la segunda (para evitar cabecera)
+for fila in hoja.iter_rows(min_row=2, min_col=4, max_col=4):  # Columna D
+    celda_d = fila[0]
+    if celda_d.value == "Global":
+        fila_idx = celda_d.row
+        for col in range(6, 15):  # Columnas F (6) a N (14)
+            hoja.cell(row=fila_idx, column=col).value = None
 
-columnas_finales = [  # Columnas requeridas
-    "ID_REG", "ID_ORG", "Fecha", "Organización", "ID_Cluster",
-    "Total Attempted Messages", "Stopped Messages", "Clean Messages",
-    "Stopped by Reputation Filtering", "Stopped as Invalid Recipients",
-    "Spam Detected", "Virus Detected", "Detected by Advanced Malware Protection",
-    "Stopped by Content Filter", "Messages with Malicious URLs", "Stopped by DMARC"
-]
-
-dataframes = []  # Inicia lista
-id_reg = 1
-
-for archivo in os.listdir(carpeta):  # Procesamos los archivos
-    if archivo.endswith('.csv'):
-        try:
-            ruta = os.path.join(carpeta, archivo)
-            df = pd.read_csv(ruta, header=None, skiprows=1)  # Leer CSV: encabezados fila 1 (índice 0), saltar fila 2 (índice 1)
-            if len(df) > 0 and df.iloc[2].sum() != 0:  # Verifica fila 3 (índice 2) existe y tiene datos
-                empty_row = pd.Series([0] * len(df.columns), index=df.columns)  # Crea una fila con ceros
-
-                while len(df) < 3:  # Agregar filas con ceros hasta alcanzar la fila 3
-                    df = pd.concat([df, pd.DataFrame([pd.Series([0]*len(df.columns), index=df.columns)]),], ignore_index=True)
-                df.iloc[1] = empty_row
-            else:
-                df.iloc[1] = empty_row
-
-            partes = archivo.split("_")  # Extraer Organización e ID_Cluster del nombre del archivo
-            organizacion = partes[0].strip()
-            id_cluster = partes[1]
-
-            id_org = ""
-
-            fila = {
-                "ID_REG": id_reg,
-                "ID_ORG": id_org,
-                "Fecha": fecha_mes_anterior,
-                "Organización": organizacion,
-                "ID_Cluster": id_cluster,
-                "Total Attempted Messages": df.get("Total Attempted Messages", pd.Series([0])).iloc[0],
-                "Stopped Messages": df.get("Total Threat Messages", pd.Series([0])).iloc[0],
-                "Clean Messages": df.get("Clean Messages", pd.Series([0])).iloc[0],
-                "Stopped by Reputation Filtering": df.get("Stopped by IP Reputation Filtering", pd.Series([0])).iloc[0],
-                "Stopped as Invalid Recipients": df.get("Stopped as Invalid Recipients", pd.Series([0])).iloc[0],
-                "Spam Detected": df.get("Spam Detected", pd.Series([0])).iloc[0],
-                "Virus Detected": df.get("Virus Detected", pd.Series([0])).iloc[0],
-                "Detected by Advanced Malware Protection": df.get("Detected by Advanced Malware Protection", pd.Series([0])).iloc[0],
-                "Stopped by Content Filter": df.get("Stopped by Content Filter", pd.Series([0])).iloc[0],
-                "Messages with Malicious URLs": df.get("Messages with Malicious URLs", pd.Series([0])).iloc[0],
-                "Stopped by DMARC": df.get("Stopped by DMARC", pd.Series([0])).iloc[0],
-            }
-
-            dataframes.append(pd.DataFrame([fila]))
-            id_reg += 1
-
-        except Exception as e:
-            print(f"Error procesando {archivo}: {e}")
-
-if dataframes:  # Unir y exportar
-    df_final = pd.concat(dataframes, ignore_index=True)[columnas_finales]
-
-    # MODIFICACIÓN: Si la columna "Organización" es "global", se sustituyen los valores en columnas F a M por 0
-    columnas_a_cero = [
-        "Total Attempted Messages", "Stopped Messages", "Clean Messages",
-        "Stopped by Reputation Filtering", "Stopped as Invalid Recipients",
-        "Spam Detected", "Virus Detected", "Detected by Advanced Malware Protection",
-        "Stopped by Content Filter"
-    ]
-    df_final.loc[df_final["Organización"].str.lower() == "global", columnas_a_cero] = 0
-
-    archivo_salida = "Informe_mensual.xlsx"
-    hoja_destino = "Datos"
-
-    if os.path.exists(archivo_salida):
-        wb = load_workbook(archivo_salida)
-        if hoja_destino in wb.sheetnames:
-            ws = wb[hoja_destino]
-            for row in ws.iter_rows(min_row=2, max_row=ws.max_row, max_col=ws.max_column):
-                for cell in row:
-                    cell.value = None
-        else:
-            ws = wb.create_sheet(hoja_destino)
-    else:
-        from openpyxl import Workbook
-        wb = Workbook()
-        ws = wb.active
-        ws.title = hoja_destino
-
-    for r_idx, row in enumerate(dataframe_to_rows(df_final, index=False, header=True), 1):
-        for c_idx, value in enumerate(row, 1):
-            ws.cell(row=r_idx, column=c_idx, value=value)
-
-    wb.save(archivo_salida)
-    print("Archivo 'Informe_mensual.xlsx' actualizado")
-else:
-    print("No se encontraron archivos CSV válidos.")
+# Guardar los cambios
+wb.save(archivo)
+print("Actualización completada.")
