@@ -1,18 +1,1 @@
-from openpyxl import load_workbook
-
-# Cargar el archivo Excel
-archivo = "Informe_mensual.xlsx"
-wb = load_workbook(archivo)
-hoja = wb["Datos"]
-
-# Recorrer las filas desde la segunda (para evitar cabecera)
-for fila in hoja.iter_rows(min_row=2, min_col=4, max_col=4):  # Columna D
-    celda_d = fila[0]
-    if celda_d.value == "Global":
-        fila_idx = celda_d.row
-        for col in range(6, 15):  # Columnas F (6) a N (14)
-            hoja.cell(row=fila_idx, column=col).value = None
-
-# Guardar los cambios
-wb.save(archivo)
-print("Actualización completada.")
+# pendiente
