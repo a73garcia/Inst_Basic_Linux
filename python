@@ -25,17 +25,17 @@ for archivo in os.listdir(carpeta):  # Procesamos los archivos
     if archivo.endswith('.csv'):
         try:
             ruta = os.path.join(carpeta, archivo)
-            df = pd.read_csv(ruta, header=0, skiprows=[1])  # Leer CSV: encabezados fila 1 (índice 0), saltar fila 2 (índice 1)
+            df = pd.read_csv(ruta, header=0)  # Leer CSV con encabezado en la primera fila
 
-            if df.empty or len(df) < 3:
-                raise ValueError("CSV vacío o con menos de 3 filas")
+            if df.shape[0] < 3:
+                raise ValueError("CSV con menos de 3 filas")
 
             partes = archivo.split("_")  # Extraer Organización e ID_Cluster del nombre del archivo
             organizacion = partes[0].strip()
             id_cluster = partes[1] if len(partes) > 1 else ""
             id_org = ""
 
-            fila3 = df.iloc[2]  # Fila 3 (índice 2)
+            fila3 = df.iloc[2]  # Fila 3 (índice 2) contiene los valores reales
 
             fila = {
                 "ID_REG": id_reg,
