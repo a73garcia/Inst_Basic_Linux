@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from openpyxl import load_workbook, Workbook
+from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
 # Ruta de los archivos CSV
@@ -25,17 +25,21 @@ for archivo in os.listdir(carpeta):  # Procesamos los archivos
     if archivo.endswith('.csv'):
         try:
             ruta = os.path.join(carpeta, archivo)
-            df = pd.read_csv(ruta, header=0)  # Leer CSV con encabezado en la primera fila
+            df = pd.read_csv(ruta, header=None, skiprows=1)  # Leer CSV: encabezados fila 1 (índice 0), saltar fila 2 (índice 1)
+            if len(df) > 0 and df.iloc[2].sum() != 0:  # Verifica fila 3 (índice 2) existe y tiene datos
+                empty_row = pd.Series([0] * len(df.columns), index=df.columns)  # Crea una fila con ceros
 
-            if df.shape[0] < 3:
-                raise ValueError("CSV con menos de 3 filas")
+                while len(df) < 3:  # Agregar filas con ceros hasta alcanzar la fila 3
+                    df = pd.concat([df, pd.DataFrame([pd.Series([0]*len(df.columns), index=df.columns)]),], ignore_index=True)
+                df.iloc[1] = empty_row
+            else:
+                df.iloc[1] = empty_row
 
             partes = archivo.split("_")  # Extraer Organización e ID_Cluster del nombre del archivo
             organizacion = partes[0].strip()
-            id_cluster = partes[1] if len(partes) > 1 else ""
-            id_org = ""
+            id_cluster = partes[1]
 
-            fila3 = df.iloc[2]  # Fila 3 (índice 2) contiene los valores reales
+            id_org = ""
 
             fila = {
                 "ID_REG": id_reg,
@@ -43,17 +47,17 @@ for archivo in os.listdir(carpeta):  # Procesamos los archivos
                 "Fecha": fecha_mes_anterior,
                 "Organización": organizacion,
                 "ID_Cluster": id_cluster,
-                "Total Attempted Messages": fila3.get("Total Attempted Messages", 0),
-                "Stopped Messages": fila3.get("Total Threat Messages", 0),
-                "Clean Messages": fila3.get("Clean Messages", 0),
-                "Stopped by Reputation Filtering": fila3.get("Stopped by IP Reputation Filtering", 0),
-                "Stopped as Invalid Recipients": fila3.get("Stopped as Invalid Recipients", 0),
-                "Spam Detected": fila3.get("Spam Detected", 0),
-                "Virus Detected": fila3.get("Virus Detected", 0),
-                "Detected by Advanced Malware Protection": fila3.get("Detected by Advanced Malware Protection", 0),
-                "Stopped by Content Filter": fila3.get("Stopped by Content Filter", 0),
-                "Messages with Malicious URLs": fila3.get("Messages with Malicious URLs", 0),
-                "Stopped by DMARC": fila3.get("Stopped by DMARC", 0),
+                "Total Attempted Messages": df.get("Total Attempted Messages", pd.Series([0])).iloc[0],
+                "Stopped Messages": df.get("Total Threat Messages", pd.Series([0])).iloc[0],
+                "Clean Messages": df.get("Clean Messages", pd.Series([0])).iloc[0],
+                "Stopped by Reputation Filtering": df.get("Stopped by IP Reputation Filtering", pd.Series([0])).iloc[0],
+                "Stopped as Invalid Recipients": df.get("Stopped as Invalid Recipients", pd.Series([0])).iloc[0],
+                "Spam Detected": df.get("Spam Detected", pd.Series([0])).iloc[0],
+                "Virus Detected": df.get("Virus Detected", pd.Series([0])).iloc[0],
+                "Detected by Advanced Malware Protection": df.get("Detected by Advanced Malware Protection", pd.Series([0])).iloc[0],
+                "Stopped by Content Filter": df.get("Stopped by Content Filter", pd.Series([0])).iloc[0],
+                "Messages with Malicious URLs": df.get("Messages with Malicious URLs", pd.Series([0])).iloc[0],
+                "Stopped by DMARC": df.get("Stopped by DMARC", pd.Series([0])).iloc[0],
             }
 
             dataframes.append(pd.DataFrame([fila]))
@@ -77,6 +81,7 @@ if dataframes:  # Unir y exportar
         else:
             ws = wb.create_sheet(hoja_destino)
     else:
+        from openpyxl import Workbook
         wb = Workbook()
         ws = wb.active
         ws.title = hoja_destino
