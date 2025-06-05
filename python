@@ -68,6 +68,16 @@ for archivo in os.listdir(carpeta):  # Procesamos los archivos
 
 if dataframes:  # Unir y exportar
     df_final = pd.concat(dataframes, ignore_index=True)[columnas_finales]
+
+    # MODIFICACIÓN: Si la columna "Organización" es "global", se sustituyen los valores en columnas F a M por 0
+    columnas_a_cero = [
+        "Total Attempted Messages", "Stopped Messages", "Clean Messages",
+        "Stopped by Reputation Filtering", "Stopped as Invalid Recipients",
+        "Spam Detected", "Virus Detected", "Detected by Advanced Malware Protection",
+        "Stopped by Content Filter"
+    ]
+    df_final.loc[df_final["Organización"].str.lower() == "global", columnas_a_cero] = 0
+
     archivo_salida = "Informe_mensual.xlsx"
     hoja_destino = "Datos"
 
