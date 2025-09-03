@@ -1,1 +1,23 @@
-# pendiente
+# Últimos 7 días (puedes dejarlo en el time picker o añadir earliest/latest)
+(index=esa (sourcetype=cisco:esa:textmail "Custom Log Entry")
+ OR index=esa sourcetype=cisco:esa:cef) earliest=-7d@d latest=now
+/* --- Normalizaciones --- */
+| rex field=_raw "(?:MID\s|ESAMID=)(?<MID>\d+)"
+| rex field=_raw "Custom Log Entry:\s*(?<signature>[^\r\n]+)"
+| rex field=_raw "suser=(?<suser>[^\s]+)"
+| rex field=_raw "duser=(?<duser>[^\s]+)"
+| rex field=_raw "act=(?<action>[^\s]+)"
+/* --- Correlación por MID --- */
+| stats earliest(_time) as first_time latest(_time) as last_time
+        values(host) as host
+        values(signature) as signature
+        values(suser) as suser
+        values(duser) as duser
+        last(action) as action
+  by MID
+/* --- Sólo los que llevan signature del Custom Log --- */
+| where isnotnull(signature)
+/* --- Presentación --- */
+| eval time=strftime(first_time,"%Y-%m-%d %H:%M:%S")
+| fields time host MID signature suser duser action
+| sort - time
