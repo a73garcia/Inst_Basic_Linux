@@ -25,61 +25,27 @@
 
 
 
+
 (index=esa (sourcetype=cisco:esa:textmail "Custom Log Entry")
  OR index=esa sourcetype=cisco:esa:cef) earliest=-7d@d latest=now
 | rex field=_raw "(?:MID\s|ESAMID=)(?<MID>\d+)"
 | rex field=_raw "Custom Log Entry:\s*(?<signature>[^\r\n]+)"
-| rex field=_raw "suser=(?<suser>[^\s]+)"
-| rex field=_raw "duser=(?<duser>[^\s]+)"
-| rex field=_raw "act=(?<action>[^\s]+)"
+| rex field=_raw "suser=(?<Sender>[^\s]+)"
+| rex field=_raw "duser=(?<Recipient>[^\s]+)"
 | rex field=_raw "start=(?<start>[^=]+\d{4})"
 | rex field=_raw "end=(?<end>[^=]+\d{4})"
-| rex field=_raw "ESAMsgSize=(?<ESAMsgSize>\d+)"
-| rex field=_raw "ESAAttachmentDetails=(?<ESAAttachmentDetails>[^\s]+)"
-| rex field=_raw "DKIM_verdict=(?<DKIM_verdict>[^\s]+)"
-| rex field=_raw "SPF_verdict=(?<SPF_verdict>[^\s]+)"
-| rex field=_raw "cs1=(?<cs1>[^\s]+)"
-| rex field=_raw "cs2=(?<cs2>[^\s]+)"
-| rex field=_raw "cs3=(?<cs3>[^\s]+)"
-| rex field=_raw "cs6=(?<cs6>[^\s]+)"
-| rex field=_raw "antivirus_verdict=(?<antivirus_verdict>[^\s]+)"
-| rex field=_raw "src_user_domain=(?<src_user_domain>[^\s]+)"
-| rex field=_raw "recipient_status=(?<recipient_status>[^\s]+)"
-| rex field=_raw "DMARC_verdict=(?<DMARC_verdict>[^\s]+)"
-| stats earliest(_time) as first_time latest(_time) as last_time
+| stats earliest(_time) as first_time
         values(host) as host
         values(signature) as signature
-        values(suser) as suser
-        values(duser) as duser
-        last(action) as action
+        values(Sender) as Sender
+        values(Recipient) as Recipient
         values(start) as start values(end) as end
-        values(ESAMsgSize) as ESAMsgSize values(ESAAttachmentDetails) as ESAAttachmentDetails
-        values(DKIM_verdict) as DKIM_verdict values(SPF_verdict) as SPF_verdict
-        values(cs1) as cs1 values(cs2) as cs2 values(cs3) as cs3 values(cs6) as cs6
-        values(antivirus_verdict) as antivirus_verdict
-        values(src_user_domain) as src_user_domain
-        values(recipient_status) as recipient_status
-        values(DMARC_verdict) as DMARC_verdict
   by MID
 | where isnotnull(signature)
-| eval time=strftime(first_time,"%Y-%m-%d %H:%M:%S")
-
-/* === PARTE AÑADIDA === */
-| eval HoraE=strptime(start,"%a %b %d %H:%M:%S %Y"),
-       HoraS=strptime(end,"%a %b %d %H:%M:%S %Y"),
-       SizeMB=round(ESAMsgSize/1048576,2),
-       HostRaw=mvindex(split(host,"."),0),
-       SPF=mvindex(split(SPF_verdict,","),0),
-       Adjunto=mvindex(split(ESAAttachmentDetails,","),1)
-| eval DKIM=case(DKIM_verdict="pass","pass",
-                 DKIM_verdict="permfail","permfail",
-                 DKIM_verdict="tempfail","tempfail",
-                 true(),"Other")
-| rename suser as Sender duser as Recipient action as Accion
-| rename cs2 as IP_Pais cs1 as Politica cs3 as Categoria cs6 as Reputacion
-| rename antivirus_verdict as AV_Verdict src_user_domain as Domain recipient_status as Status DMARC_verdict as DMARC
-| eval ESA_Num=tonumber(replace(HostRaw,"esa","")),
-       Nodo=printf("ESA%02d",ESA_Num)
+| eval HoraE=strptime(start,"%a %b %d %H:%M:%S %Y")
+| eval Dia=strftime(HoraE,"%d/%m/%Y"), Entrada=strftime(HoraE,"%H:%M")
+| eval HostRaw=mvindex(split(host,"."),0)
+| eval ESA_Num=tonumber(replace(HostRaw,"esa","")), Nodo=printf("ESA%02d",ESA_Num)
 | eval CES=case(
     like(host,"%.santandergroup.c3s2.iphmx.com"),"EU",
     like(host,"%.hc5523-55.iphmx.com"),"AM",
@@ -88,11 +54,5 @@
     like(host,"%.hc5533-96.iphmx.com"),"APP DR",
     true(),""
   )
-| eval Dia=strftime(HoraE,"%d/%m/%Y"),
-       Entrada=strftime(HoraE,"%H:%M"),
-       Salida=strftime(HoraS,"%H:%M"),
-       QueueTime=round(HoraS-HoraE)
-
-/* === SALIDA === */
-| table Dia Entrada Salida QueueTime Nodo CES MID signature Sender Recipient Accion Domain Status DMARC IP_Pais Politica Categoria Reputacion AV_Verdict SizeMB SPF DKIM host
+| table signature MID CES Nodo Dia Entrada Sender Recipient
 | sort - Dia - Entrada
