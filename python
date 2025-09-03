@@ -34,3 +34,25 @@ earliest=-7d@d latest=now
 | eval date=strftime(first_time,"%Y-%m-%d"), time=strftime(first_time,"%H:%M:%S")
 | fields date time MID signature suser host
 | sort - first_time
+
+
+
+index=esa (sourcetype=cisco:esa:textmail OR sourcetype=cisco:esa:cef)
+earliest=-7d@d latest=now
+| rex field=_raw "(?:MID\s|ESAMID=)(?<MID>\d+)"
+| rex field=_raw "Custom Log Entry:\s*(?<signature>[^\r\n]+)"
+| rex field=_raw "suser=(?<suser>[^\s]+)"
+| eval from_textmail=case(sourcetype="cisco:esa:textmail",1,true(),0)
+| eval from_cef=case(sourcetype="cisco:esa:cef",1,true(),0)
+| stats min(_time) as first_time
+        values(signature) as signature
+        values(suser) as suser
+        values(host) as host
+        max(from_textmail) as has_textmail
+        max(from_cef) as has_cef
+        by MID
+| where has_textmail=1 AND has_cef=1
+      AND match(signature,"^This is an external domain sent from an internal")
+| eval date=strftime(first_time,"%Y-%m-%d"), time=strftime(first_time,"%H:%M:%S")
+| fields date time MID signature suser host
+| sort - first_time
