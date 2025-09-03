@@ -21,3 +21,61 @@
 | eval time=strftime(first_time,"%Y-%m-%d %H:%M:%S")
 | fields time host MID signature suser duser action
 | sort - time
+
+
+
+
+(index=esa (sourcetype=cisco:esa:textmail "Custom Log Entry") OR index=esa sourcetype=cisco:esa:cef) earliest=-7d@d latest=now
+| rex field=_raw "(?:MID\s|ESAMID=)(?<MID>\d+)"
+| rex field=_raw "Custom Log Entry:\s*(?<signature>[^\r\n]+)"
+| rex field=_raw "suser=(?<suser>[^\s]+)"
+| rex field=_raw "duser=(?<duser>[^\s]+)"
+| rex field=_raw "act=(?<action>[^\s]+)"
+| rex field=_raw "start=(?<start>[^=]+\d{4})"
+| rex field=_raw "end=(?<end>[^=]+\d{4})"
+| rex field=_raw "ESAMsgSize=(?<ESAMsgSize>\d+)"
+| rex field=_raw "ESAAttachmentDetails=(?<ESAAttachmentDetails>[^\s]+)"
+| rex field=_raw "DKIM_verdict=(?<DKIM_verdict>[^\s]+)"
+| rex field=_raw "SPF_verdict=(?<SPF_verdict>[^\s]+)"
+| stats earliest(eval(if(sourcetype="cisco:esa:textmail",_time,null()))) as sig_time
+        values(eval(if(sourcetype="cisco:esa:textmail",host,null()))) as host_textmail
+        values(eval(if(sourcetype="cisco:esa:cef",host,null()))) as host_cef
+        values(signature) as signature
+        values(suser) as Sender
+        values(duser) as Recipient
+        last(action) as Accion
+        values(cs2) as IP_Pais
+        values(cs1) as Politica
+        values(cs3) as Categoria
+        values(cs6) as Reputacion
+        values(src_user_domain) as Domain
+        values(recipient_status) as Status
+        values(DMARC_verdict) as DMARC
+        values(antivirus_verdict) as AV_Verdict
+        values(ESAMsgSize) as ESAMsgSize
+        values(ESAAttachmentDetails) as ESAAttachmentDetails
+        values(DKIM_verdict) as DKIM_verdict
+        values(SPF_verdict) as SPF_verdict
+        values(start) as start
+        values(end) as end
+  by MID
+| eval host=coalesce(mvindex(host_cef,0), mvindex(host_textmail,0))
+| eval HoraE=strptime(start,"%a %b %d %H:%M:%S %Y"), HoraS=strptime(end,"%a %b %d %H:%M:%S %Y")
+| eval SizeMB=round(ESAMsgSize/1048576,2)
+| eval HostRaw=mvindex(split(host,"."),0)
+| eval SPF=mvindex(split(SPF_verdict,","),0)
+| eval Adjunto=mvindex(split(ESAAttachmentDetails,","),1)
+| eval DKIM=case(like(DKIM_verdict,"pass%"),"pass", like(DKIM_verdict,"permfail%"),"permfail", like(DKIM_verdict,"tempfail%"),"tempfail", true(),"Other")
+| rename ESAMID as MID
+| eval ESA_Num=tonumber(replace(HostRaw,"esa","")), Nodo=printf("ESA%02d",ESA_Num)
+| eval CES=case(
+    like(host,"%.santandergroup.c3s2.iphmx.com"),"EU",
+    like(host,"%.hc5523-55.iphmx.com"),"AM",
+    like(host,"%.hc6514-33.iphmx.com"),"BR",
+    like(host,"%.santandergroup-out.c3s2.iphmx.com"),"APP",
+    like(host,"%.hc5533-96.iphmx.com"),"APP DR",
+    true(),""
+  )
+| eval Dia=strftime(HoraE,"%d/%m/%Y"), Entrada=strftime(HoraE,"%H:%M"), Salida=strftime(HoraS,"%H:%M"), QueueTime=round(HoraS-HoraE)
+| table Dia Entrada Salida QueueTime Nodo CES MID signature Sender Recipient Accion Domain Status DMARC IP_Pais Politica Categoria Reputacion AV_Verdict SizeMB SPF DKIM host
+| sort - Dia - Entrada
