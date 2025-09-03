@@ -18,3 +18,19 @@ index=esa (sourcetype=cisco:esa:textmail "Custom Log Entry" OR sourcetype=cisco:
 | where signature="This is an external domain sent from an internal, sender" AND isnotnull(src)
 | dedup mid
 | table mid signature src
+
+
+(index=esa (sourcetype=cisco:esa:textmail "Custom Log Entry") OR sourcetype=cisco:esa:cef)
+earliest=-7d@d latest=now
+| rex field=_raw "(?:MID\s|ESAMID=)(?<MID>\d+)"
+| rex field=_raw "Custom Log Entry:\s*(?<signature>[^\r\n]+)"
+| rex field=_raw "suser=(?<suser>[^\s]+)"
+| search signature="This is an external domain sent from an internal sender"
+| stats min(_time) as first_time
+        values(signature) as signature
+        values(suser) as suser
+        values(host) as host
+        by MID
+| eval date=strftime(first_time,"%Y-%m-%d"), time=strftime(first_time,"%H:%M:%S")
+| fields date time MID signature suser host
+| sort - first_time
