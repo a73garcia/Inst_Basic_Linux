@@ -56,3 +56,37 @@
   )
 | table signature MID CES Nodo Dia Entrada Sender Recipient
 | sort - Dia - Entrada
+
+
+
+
+(index=esa (sourcetype=cisco:esa:textmail "Custom Log Entry") 
+ OR index=esa sourcetype=cisco:esa:cef) earliest=-7d@d latest=now
+| rex field=_raw "(?:MID\s|ESAMID=)(?<MID>\d+)"
+/* solo extraer signature del textmail */
+| eval signature=if(sourcetype="cisco:esa:textmail", mvindex(split(_raw,"Custom Log Entry: "),1), null())
+| rex field=_raw "suser=(?<Sender>[^\s]+)"
+| rex field=_raw "duser=(?<Recipient>[^\s]+)"
+| rex field=_raw "start=(?<start>[^=]+\d{4})"
+| stats earliest(eval(if(sourcetype="cisco:esa:textmail",_time,null()))) as sig_time
+        values(eval(if(sourcetype="cisco:esa:textmail",signature,null()))) as signature
+        values(host) as host
+        values(Sender) as Sender
+        values(Recipient) as Recipient
+        values(start) as start
+  by MID
+| where isnotnull(signature)
+| eval HoraE=strptime(start,"%a %b %d %H:%M:%S %Y")
+| eval Dia=strftime(HoraE,"%d/%m/%Y"), Entrada=strftime(HoraE,"%H:%M")
+| eval HostRaw=mvindex(split(host,"."),0)
+| eval ESA_Num=tonumber(replace(HostRaw,"esa","")), Nodo=printf("ESA%02d",ESA_Num)
+| eval CES=case(
+    like(host,"%.santandergroup.c3s2.iphmx.com"),"EU",
+    like(host,"%.hc5523-55.iphmx.com"),"AM",
+    like(host,"%.hc6514-33.iphmx.com"),"BR",
+    like(host,"%.santandergroup-out.c3s2.iphmx.com"),"APP",
+    like(host,"%.hc5533-96.iphmx.com"),"APP DR",
+    true(),""
+  )
+| table signature MID CES Nodo Dia Entrada Sender Recipient
+| sort - Dia - Entrada
