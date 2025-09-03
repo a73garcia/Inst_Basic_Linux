@@ -90,3 +90,32 @@
   )
 | table signature MID CES Nodo Dia Entrada Sender Recipient
 | sort - Dia - Entrada
+
+
+(index=esa (sourcetype=cisco:esa:textmail "Custom Log Entry")
+ OR index=esa sourcetype=cisco:esa:cef) earliest=-7d@d latest=now
+| eval mid=coalesce(mid, ESAMID)
+| eval sig_from_text=if(sourcetype="cisco:esa:textmail", signature, null())
+| stats earliest(eval(if(sourcetype="cisco:esa:textmail",_time,null()))) as sig_time
+        values(sig_from_text) as signature
+        values(host) as host
+        values(suser) as Sender
+        values(duser) as Recipient
+        earliest(start) as start
+  by mid
+| where isnotnull(signature)
+| where match(signature, "(?i)^this is an external domain sent from an internal,? sender$")
+| eval HoraE=coalesce(strptime(start,"%a %b %d %H:%M:%S %Y"), sig_time)
+| eval Dia=strftime(HoraE,"%d/%m/%Y"), Entrada=strftime(HoraE,"%H:%M")
+| eval HostRaw=mvindex(split(host,"."),0)
+| eval ESA_Num=tonumber(replace(HostRaw,"esa","")), Nodo=printf("ESA%02d",ESA_Num)
+| eval CES=case(
+    like(host,"%.santandergroup.c3s2.iphmx.com"),"EU",
+    like(host,"%.hc5523-55.iphmx.com"),"AM",
+    like(host,"%.hc6514-33.iphmx.com"),"BR",
+    like(host,"%.santandergroup-out.c3s2.iphmx.com"),"APP",
+    like(host,"%.hc5533-96.iphmx.com"),"APP DR",
+    true(),""
+  )
+| table signature mid CES Nodo Dia Entrada Sender Recipient
+| sort - Dia - Entrada
