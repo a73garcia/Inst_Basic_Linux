@@ -27,3 +27,36 @@
 
 | eval Correos = replace(tostring(Correos,"commas"),",",".")
 | rename _time AS Tiempo
+
+
+
+
+
+
+
+/* porcentajes NUMÉRICOS (para reglas de color) */
+| eval acordodigital_pct      = if(acordodigital=0, 0, round(100*acordodigital/Correos,2))
+| eval notificacionesSanMX_pct= if(notificacionesSanMX=0, 0, round(100*notificacionesSanMX/Correos,2))
+| eval faturapromeial_pct     = if(faturapromeial=0, 0, round(100*faturapromeial/Correos,2))
+| eval mensajeria_pct         = if(mensajeria=0, 0, round(100*mensajeria/Correos,2))
+| eval notificacionesMX_pct   = if(notificacionesMX=0, 0, round(100*notificacionesMX/Correos,2))
+| eval Otros_pct              = if(Otros=0, 0, round(100*Otros/Correos,2))
+
+/* columnas de DISPLAY (texto) */
+| eval acordodigital_disp      = if(acordodigital=0, "0", replace(tostring(acordodigital,"commas"),",",".")      + " (" + acordodigital_pct      + "%)")
+| eval notificacionesSanMX_disp= if(notificacionesSanMX=0,"0", replace(tostring(notificacionesSanMX,"commas"),",",".") + " (" + notificacionesSanMX_pct+ "%)")
+| eval faturapromeial_disp     = if(faturapromeial=0, "0", replace(tostring(faturapromeial,"commas"),",",".")     + " (" + faturapromeial_pct     + "%)")
+| eval mensajeria_disp         = if(mensajeria=0,     "0", replace(tostring(mensajeria,"commas"),",",".")         + " (" + mensajeria_pct         + "%)")
+| eval notificacionesMX_disp   = if(notificacionesMX=0,"0", replace(tostring(notificacionesMX,"commas"),",",".")  + " (" + notificacionesMX_pct   + "%)")
+| eval Otros_disp              = if(Otros=0,          "0", replace(tostring(Otros,"commas"),",",".")              + " (" + Otros_pct              + "%)")
+
+/* muestra solo las columnas display + Correos */
+| eval Correos = replace(tostring(Correos,"commas"),",",".")
+| fields _time Correos acordodigital_disp notificacionesSanMX_disp faturapromeial_disp mensajeria_disp notificacionesMX_disp Otros_disp
+| rename _time AS Tiempo
+| rename acordodigital_disp      AS "acordodigital@santander.com.br"
+         notificacionesSanMX_disp AS "notificaciones@notificaciones.santander.com.mx"
+         faturapromeial_disp      AS "faturapromeial@santander.com.br"
+         mensajeria_disp          AS "mensajeria@santander.cl"
+         notificacionesMX_disp    AS "notificaciones@santander.com.mx"
+         Otros_disp               AS "Otros"
