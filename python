@@ -16,14 +16,30 @@
 | addcoltotals
 | eval _time = if(isnull(_time), "Total", _time)
 
-/* ---- formateo: número (porcentaje) por columna ---- */
-| eval acordodigital     = replace(tostring(acordodigital,"commas"),",",".") + " (" + tostring(round(100*acordodigital/Correos,2)) + "%)"
-| eval notificacionesSanMX = replace(tostring(notificacionesSanMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesSanMX/Correos,2)) + "%)"
-| eval faturapromeial    = replace(tostring(faturapromeial,"commas"),",",".") + " (" + tostring(round(100*faturapromeial/Correos,2)) + "%)"
-| eval mensajeria        = replace(tostring(mensajeria,"commas"),",",".") + " (" + tostring(round(100*mensajeria/Correos,2)) + "%)"
-| eval notificacionesMX  = replace(tostring(notificacionesMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesMX/Correos,2)) + "%)"
-| eval Otros             = replace(tostring(Otros,"commas"),",",".") + " (" + tostring(round(100*Otros/Correos,2)) + "%)"
+| eval acordodigital = if(acordodigital=0, "0",
+                          if(100*acordodigital/Correos>20,
+                             "<span style=\"color:red\">" + replace(tostring(acordodigital,"commas"),",",".") + " (" + tostring(round(100*acordodigital/Correos,2)) + "%)</span>",
+                             replace(tostring(acordodigital,"commas"),",",".") + " (" + tostring(round(100*acordodigital/Correos,2)) + "%)" ))
+| eval notificacionesSanMX = if(notificacionesSanMX=0, "0",
+                                if(100*notificacionesSanMX/Correos>20,
+                                   "<span style=\"color:red\">" + replace(tostring(notificacionesSanMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesSanMX/Correos,2)) + "%)</span>",
+                                   replace(tostring(notificacionesSanMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesSanMX/Correos,2)) + "%)" ))
+| eval faturapromeial = if(faturapromeial=0, "0",
+                           if(100*faturapromeial/Correos>20,
+                              "<span style=\"color:red\">" + replace(tostring(faturapromeial,"commas"),",",".") + " (" + tostring(round(100*faturapromeial/Correos,2)) + "%)</span>",
+                              replace(tostring(faturapromeial,"commas"),",",".") + " (" + tostring(round(100*faturapromeial/Correos,2)) + "%)" ))
+| eval mensajeria = if(mensajeria=0, "0",
+                       if(100*mensajeria/Correos>20,
+                          "<span style=\"color:red\">" + replace(tostring(mensajeria,"commas"),",",".") + " (" + tostring(round(100*mensajeria/Correos,2)) + "%)</span>",
+                          replace(tostring(mensajeria,"commas"),",",".") + " (" + tostring(round(100*mensajeria/Correos,2)) + "%)" ))
+| eval notificacionesMX = if(notificacionesMX=0, "0",
+                             if(100*notificacionesMX/Correos>20,
+                                "<span style=\"color:red\">" + replace(tostring(notificacionesMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesMX/Correos,2)) + "%)</span>",
+                                replace(tostring(notificacionesMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesMX/Correos,2)) + "%)" ))
+| eval Otros = if(Otros=0, "0",
+                  if(100*Otros/Correos>20,
+                     "<span style=\"color:red\">" + replace(tostring(Otros,"commas"),",",".") + " (" + tostring(round(100*Otros/Correos,2)) + "%)</span>",
+                     replace(tostring(Otros,"commas"),",",".") + " (" + tostring(round(100*Otros/Correos,2)) + "%)" ))
 
-/* deja Correos numérico para los cálculos y lo formateas al final */
 | eval Correos = replace(tostring(Correos,"commas"),",",".")
 | rename _time AS Tiempo
