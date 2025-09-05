@@ -1,33 +1,29 @@
-(index=siem-cloud-ciscoesa 
- (sourcetype=cisco:esa:textmail "Custom Log Entry")
- OR sourcetype=cisco:esa:cef (cf_header="Consolidated Log Event*"))
- earliest=-7d@d latest=now
-| rex field=_raw "(?:MID\s|ESAMID=)(?<MID>\d+)"
-| rex field=_raw "Custom Log Entry:\s*(?<signature>[^\r\n]+)"
-| rex field=_raw "suser=(?<user>[^\s]+)"
-| rex field=_raw "src=(?<src>[^\s]+)"
-| eval from_textmail = if(sourcetype=="cisco:esa:textmail",1,0)
-| eval from_cef      = if(sourcetype=="cisco:esa:cef",1,0)
-| eval HostRaw=mvindex(split(host,"."),0)
-| eval ESA_Num=tonumber(replace(HostRaw,"esa",""))
-| eval Nodo=printf("ESA%02d", ESA_Num)
-| eval CES=case(
-    like(host,"%.cs32.iphmx.com"),"EU",
-    like(host,"%.cs52.iphmx.com"),"RAM",
-    like(host,"%.cs42.iphmx.com"),"APP",
-    like(host,"%.cs96.iphmx.com"),"APP DR"
-  )
-| stats min(_time) as first_time
-        values(signature) as signature
-        values(user) as Sender
-        values(src) as IP_2
-        max(from_textmail) as has_textmail
-        max(from_cef) as has_cef
-        values(CES) as CES
-        values(Nodo) as Nodo
-  by MID
-| where has_textmail=1 AND has_cef=1
-| search signature="This is an external domain sent from an internal sender"
-| eval date=strftime(first_time,"%Y-%m-%d"), time=strftime(first_time,"%H:%M:%S")
-| fields date time MID signature Sender IP_2 CES Nodo
-| sort first_time
+...  /* tu búsqueda y filtros */
+| bin _time span=1h
+| stats count AS Correos
+        count(eval(user="acordodigital@santander.com.br"))            AS acordodigital
+        count(eval(user="notificaciones@notificaciones.santander.com.mx")) AS notificacionesSanMX
+        count(eval(user="faturapromeial@santander.com.br"))            AS faturapromeial
+        count(eval(user="mensajeria@santander.cl"))                    AS mensajeria
+        count(eval(user="notificaciones@santander.com.mx"))            AS notificacionesMX
+        count(eval(user!="acordodigital@santander.com.br"
+                 AND user!="notificaciones@notificaciones.santander.com.mx"
+                 AND user!="faturapromeial@santander.com.br"
+                 AND user!="mensajeria@santander.cl"
+                 AND user!="notificaciones@santander.com.mx"))        AS Otros
+        BY _time
+| sort _time
+| addcoltotals
+| eval _time = if(isnull(_time), "Total", _time)
+
+/* ---- formateo: número (porcentaje) por columna ---- */
+| eval acordodigital     = replace(tostring(acordodigital,"commas"),",",".") + " (" + tostring(round(100*acordodigital/Correos,2)) + "%)"
+| eval notificacionesSanMX = replace(tostring(notificacionesSanMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesSanMX/Correos,2)) + "%)"
+| eval faturapromeial    = replace(tostring(faturapromeial,"commas"),",",".") + " (" + tostring(round(100*faturapromeial/Correos,2)) + "%)"
+| eval mensajeria        = replace(tostring(mensajeria,"commas"),",",".") + " (" + tostring(round(100*mensajeria/Correos,2)) + "%)"
+| eval notificacionesMX  = replace(tostring(notificacionesMX,"commas"),",",".") + " (" + tostring(round(100*notificacionesMX/Correos,2)) + "%)"
+| eval Otros             = replace(tostring(Otros,"commas"),",",".") + " (" + tostring(round(100*Otros/Correos,2)) + "%)"
+
+/* deja Correos numérico para los cálculos y lo formateas al final */
+| eval Correos = replace(tostring(Correos,"commas"),",",".")
+| rename _time AS Tiempo
