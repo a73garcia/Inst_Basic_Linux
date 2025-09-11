@@ -1,18 +1,16 @@
 <form>
   <label>Dashboard Correos ESA</label>
-  <description>Top minutos, remitentes, políticas, nodos y status.</description>
+  <description>Top minutos, remitentes, políticas, nodos y status en tabla</description>
 
-  <!-- Filtros arriba -->
+  <!-- Filtros -->
   <fieldset submitButton="false">
     <input type="time" token="time">
       <label>Rango temporal</label>
       <default>
-        <earliest>-24h@h</earliest>
+        <earliest>-4h</earliest>
         <latest>now</latest>
       </default>
     </input>
-
-    <!-- Opcional: filtrar por cluster (CES) si lo tienes como campo -->
     <input type="multiselect" token="f_ces" searchWhenChanged="true">
       <label>Cluster (CES)</label>
       <choice value="EU">EU</choice>
@@ -27,101 +25,97 @@
     </input>
   </fieldset>
 
-  <!-- Búsqueda base: pega tu consulta aquí y NO termines en table/fields -->
+  <!-- Búsqueda base -->
   <search id="base">
     <query>
-      <![CDATA[
-### TU BUSQUEDA BASE ###
-/*
-Ejemplo guía (sustituye por la tuya):
-index=smc-cloud-ciscoesa host="*.iphmx.com"
-| /* tus eval/rename para construir Nodo, Política, Status, Sender */
-| eval Nodo=printf("ESA%02d", tonumber(replace(mvindex(split(host,"."),0),"esa-","")))
-| rename user AS Sender, cs1 AS Política, recipient_status AS Status
-| where isnotnull(Sender) AND isnotnull(Nodo) AND isnotnull(Status)
-| bin _time span=1m
-| search $f_ces$
-*/
-      ]]>
+      index=smc-cloud-ciscoesa host="*.santandergroup-out.c3s2.iphmx.com" cef_cefIndex="Consolidated Log Event*"
+      | eval HoraE=strptime(start, "%b %d %Y %H:%M:%S %Y")
+      | eval Nodo=printf("ESA%02d", tonumber(replace(mvindex(split(host,"."),0),"esa-","")))
+      | rename user AS Sender, cs1 AS Política, recipient_status AS Status
+      | where isnotnull(Sender) AND isnotnull(Nodo) AND isnotnull(Status)
+      | bin _time span=1m
+      | search $f_ces$
     </query>
     <earliest>$time.earliest$</earliest>
     <latest>$time.latest$</latest>
   </search>
 
-  <!-- Panel 1: Top 10 minutos con más correos -->
+  <!-- Panel 1: Top minutos -->
   <row>
     <panel>
       <title>Top 10 minutos con más correos</title>
-      <chart type="bar">
+      <table>
         <search base="base">
           <query>
             | stats count by _time
             | sort - count
             | head 10
+            | eval pct=round((count*100)/sum(count) over(),2)."%"
           </query>
         </search>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.chart">bar</option>
-      </chart>
+      </table>
     </panel>
 
-    <!-- Panel 2: Top 10 remitentes -->
+    <!-- Panel 2: Top remitentes -->
     <panel>
       <title>Top 10 remitentes (Sender)</title>
-      <chart type="bar">
+      <table>
         <search base="base">
           <query>
             | stats count by Sender
             | sort - count
             | head 10
+            | eval pct=round((count*100)/sum(count) over(),2)."%"
           </query>
         </search>
-      </chart>
+      </table>
     </panel>
   </row>
 
-  <!-- Panel 3: Correos por políticas -->
+  <!-- Panel 3: Políticas -->
   <row>
     <panel>
       <title>Correos por Política</title>
-      <chart type="pie">
+      <table>
         <search base="base">
           <query>
             | stats count by Política
             | sort - count
+            | eval pct=round((count*100)/sum(count) over(),2)."%"
           </query>
         </search>
-      </chart>
+      </table>
     </panel>
 
-    <!-- Panel 4: Correos por nodos (Top 20) -->
+    <!-- Panel 4: Nodos -->
     <panel>
-      <title>Correos por Nodo (Top 20)</title>
-      <chart type="bar">
+      <title>Top 20 Nodos ESA</title>
+      <table>
         <search base="base">
           <query>
             | stats count by Nodo
             | sort - count
             | head 20
+            | eval pct=round((count*100)/sum(count) over(),2)."%"
           </query>
         </search>
-      </chart>
+      </table>
     </panel>
   </row>
 
-  <!-- Panel 5: Correos por Status -->
+  <!-- Panel 5: Status -->
   <row>
     <panel>
       <title>Correos por Status</title>
-      <chart type="pie">
+      <table>
         <search base="base">
           <query>
             | stats count by Status
             | sort - count
+            | eval pct=round((count*100)/sum(count) over(),2)."%"
           </query>
         </search>
-      </chart>
+      </table>
     </panel>
   </row>
 </form>
