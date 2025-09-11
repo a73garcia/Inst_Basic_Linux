@@ -1,6 +1,6 @@
 <form>
   <label>Dashboard Correos ESA</label>
-  <description>Top minutos, remitentes, políticas, nodos y status en tabla</description>
+  <description>Top minutos, remitentes, políticas, nodos y status (tablas)</description>
 
   <!-- Filtros -->
   <fieldset submitButton="false">
@@ -11,36 +11,23 @@
         <latest>now</latest>
       </default>
     </input>
-    <input type="multiselect" token="f_ces" searchWhenChanged="true">
-      <label>Cluster (CES)</label>
-      <choice value="EU">EU</choice>
-      <choice value="AM">AM</choice>
-      <choice value="BR">BR</choice>
-      <choice value="APP">APP</choice>
-      <choice value="APP DR">APP DR</choice>
-      <default>*</default>
-      <prefix>CES IN (</prefix>
-      <suffix>)</suffix>
-      <delimiter>","</delimiter>
-    </input>
   </fieldset>
 
-  <!-- Búsqueda base -->
+  <!-- Búsqueda base: entrega _time, Sender, Política, Nodo, Status -->
   <search id="base">
     <query>
       index=smc-cloud-ciscoesa host="*.santandergroup-out.c3s2.iphmx.com" cef_cefIndex="Consolidated Log Event*"
       | eval HoraE=strptime(start, "%b %d %Y %H:%M:%S %Y")
       | eval Nodo=printf("ESA%02d", tonumber(replace(mvindex(split(host,"."),0),"esa-","")))
       | rename user AS Sender, cs1 AS Política, recipient_status AS Status
-      | where isnotnull(Sender) AND isnotnull(Nodo) AND isnotnull(Status)
+      | where isnotnull(_time) AND isnotnull(Sender) AND isnotnull(Política) AND isnotnull(Nodo) AND isnotnull(Status)
       | bin _time span=1m
-      | search $f_ces$
     </query>
     <earliest>$time.earliest$</earliest>
     <latest>$time.latest$</latest>
   </search>
 
-  <!-- Panel 1: Top minutos -->
+  <!-- Panel 1: Top 10 minutos con más correos -->
   <row>
     <panel>
       <title>Top 10 minutos con más correos</title>
@@ -50,13 +37,15 @@
             | stats count by _time
             | sort - count
             | head 10
-            | eval pct=round((count*100)/sum(count) over(),2)."%"
+            | eventstats sum(count) as total
+            | eval pct=round((count/total)*100,2)."%"
+            | fields _time count pct
           </query>
         </search>
       </table>
     </panel>
 
-    <!-- Panel 2: Top remitentes -->
+    <!-- Panel 2: Top 10 remitentes (Sender) -->
     <panel>
       <title>Top 10 remitentes (Sender)</title>
       <table>
@@ -65,14 +54,16 @@
             | stats count by Sender
             | sort - count
             | head 10
-            | eval pct=round((count*100)/sum(count) over(),2)."%"
+            | eventstats sum(count) as total
+            | eval pct=round((count/total)*100,2)."%"
+            | fields Sender count pct
           </query>
         </search>
       </table>
     </panel>
   </row>
 
-  <!-- Panel 3: Políticas -->
+  <!-- Panel 3: Correos por Política -->
   <row>
     <panel>
       <title>Correos por Política</title>
@@ -81,29 +72,33 @@
           <query>
             | stats count by Política
             | sort - count
-            | eval pct=round((count*100)/sum(count) over(),2)."%"
+            | eventstats sum(count) as total
+            | eval pct=round((count/total)*100,2)."%"
+            | fields Política count pct
           </query>
         </search>
       </table>
     </panel>
 
-    <!-- Panel 4: Nodos -->
+    <!-- Panel 4: Top 20 Nodos ESA -->
     <panel>
-      <title>Top 20 Nodos ESA</title>
+      <title>Top 20 nodos (ESA)</title>
       <table>
         <search base="base">
           <query>
             | stats count by Nodo
             | sort - count
             | head 20
-            | eval pct=round((count*100)/sum(count) over(),2)."%"
+            | eventstats sum(count) as total
+            | eval pct=round((count/total)*100,2)."%"
+            | fields Nodo count pct
           </query>
         </search>
       </table>
     </panel>
   </row>
 
-  <!-- Panel 5: Status -->
+  <!-- Panel 5: Correos por Status -->
   <row>
     <panel>
       <title>Correos por Status</title>
@@ -112,7 +107,9 @@
           <query>
             | stats count by Status
             | sort - count
-            | eval pct=round((count*100)/sum(count) over(),2)."%"
+            | eventstats sum(count) as total
+            | eval pct=round((count/total)*100,2)."%"
+            | fields Status count pct
           </query>
         </search>
       </table>
