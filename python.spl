@@ -133,4 +133,23 @@
       </table>
     </panel>
   </row>
+
+  <!-- Panel 6: Correo mas peso -->
+<row>
+  <panel>
+    <title>Tamaño total de correos por CES (MB)</title>
+    <table>
+      <search base="base">
+        <query>
+          | stats sum('Size(MB)') as Total_MB by CES
+          | eval Total_MB=tostring(round(Total_MB,2),"commas")
+          | sort - Total_MB
+        </query>
+      </search>
+      <option name="count">10</option>
+    </table>
+  </panel>
+</row>
+
+
 </form>
