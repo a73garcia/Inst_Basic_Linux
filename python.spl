@@ -107,6 +107,11 @@
             | fields Nodo count pct
           </query>
         </search>
+<!-- Mostrar 20 filas en una sola página -->
+      <option name="count">20</option>
+      <!-- Opcionales de UX -->
+      <option name="displayRowNumbers">true</option>
+      <option name="wrap">true</option>
       </table>
     </panel>
   </row>
