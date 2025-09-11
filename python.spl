@@ -1,62 +1,127 @@
-...  /* tu búsqueda y filtros */
-| bin _time span=1h
-| stats count AS Correos
-        count(eval(user="acordodigital@santander.com.br"))            AS acordodigital
-        count(eval(user="notificaciones@notificaciones.santander.com.mx")) AS notificacionesSanMX
-        count(eval(user="faturapromeial@santander.com.br"))            AS faturapromeial
-        count(eval(user="mensajeria@santander.cl"))                    AS mensajeria
-        count(eval(user="notificaciones@santander.com.mx"))            AS notificacionesMX
-        count(eval(user!="acordodigital@santander.com.br"
-                 AND user!="notificaciones@notificaciones.santander.com.mx"
-                 AND user!="faturapromeial@santander.com.br"
-                 AND user!="mensajeria@santander.cl"
-                 AND user!="notificaciones@santander.com.mx"))        AS Otros
-        BY _time
-| sort _time
-| addcoltotals
-| eval _time = if(isnull(_time), "Total", _time)
+<form>
+  <label>Dashboard Correos ESA</label>
+  <description>Top minutos, remitentes, políticas, nodos y status.</description>
 
-| foreach acordodigital notificacionesSanMX faturapromeial mensajeria notificacionesMX [
-    eval <<FIELD>> = if('<<FIELD>>'=0, 
-                        "0", 
-                        if(100*'<<FIELD>>'/Correos>20, 
-                           "<span style=\"color:red\">" + replace(tostring('<<FIELD>>',"commas"),",",".") + " (" + tostring(round(100*'<<FIELD>>'/Correos,2)) + "%)</span>", 
-                           replace(tostring('<<FIELD>>',"commas"),",",".") + " (" + tostring(round(100*'<<FIELD>>'/Correos,2)) + "%)" )
-                       )
-  ]
+  <!-- Filtros arriba -->
+  <fieldset submitButton="false">
+    <input type="time" token="time">
+      <label>Rango temporal</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
 
-| eval Correos = replace(tostring(Correos,"commas"),",",".")
-| rename _time AS Tiempo
+    <!-- Opcional: filtrar por cluster (CES) si lo tienes como campo -->
+    <input type="multiselect" token="f_ces" searchWhenChanged="true">
+      <label>Cluster (CES)</label>
+      <choice value="EU">EU</choice>
+      <choice value="AM">AM</choice>
+      <choice value="BR">BR</choice>
+      <choice value="APP">APP</choice>
+      <choice value="APP DR">APP DR</choice>
+      <default>*</default>
+      <prefix>CES IN (</prefix>
+      <suffix>)</suffix>
+      <delimiter>","</delimiter>
+    </input>
+  </fieldset>
 
+  <!-- Búsqueda base: pega tu consulta aquí y NO termines en table/fields -->
+  <search id="base">
+    <query>
+      <![CDATA[
+### TU BUSQUEDA BASE ###
+/*
+Ejemplo guía (sustituye por la tuya):
+index=smc-cloud-ciscoesa host="*.iphmx.com"
+| /* tus eval/rename para construir Nodo, Política, Status, Sender */
+| eval Nodo=printf("ESA%02d", tonumber(replace(mvindex(split(host,"."),0),"esa-","")))
+| rename user AS Sender, cs1 AS Política, recipient_status AS Status
+| where isnotnull(Sender) AND isnotnull(Nodo) AND isnotnull(Status)
+| bin _time span=1m
+| search $f_ces$
+*/
+      ]]>
+    </query>
+    <earliest>$time.earliest$</earliest>
+    <latest>$time.latest$</latest>
+  </search>
 
+  <!-- Panel 1: Top 10 minutos con más correos -->
+  <row>
+    <panel>
+      <title>Top 10 minutos con más correos</title>
+      <chart type="bar">
+        <search base="base">
+          <query>
+            | stats count by _time
+            | sort - count
+            | head 10
+          </query>
+        </search>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.chart">bar</option>
+      </chart>
+    </panel>
 
+    <!-- Panel 2: Top 10 remitentes -->
+    <panel>
+      <title>Top 10 remitentes (Sender)</title>
+      <chart type="bar">
+        <search base="base">
+          <query>
+            | stats count by Sender
+            | sort - count
+            | head 10
+          </query>
+        </search>
+      </chart>
+    </panel>
+  </row>
 
+  <!-- Panel 3: Correos por políticas -->
+  <row>
+    <panel>
+      <title>Correos por Política</title>
+      <chart type="pie">
+        <search base="base">
+          <query>
+            | stats count by Política
+            | sort - count
+          </query>
+        </search>
+      </chart>
+    </panel>
 
+    <!-- Panel 4: Correos por nodos (Top 20) -->
+    <panel>
+      <title>Correos por Nodo (Top 20)</title>
+      <chart type="bar">
+        <search base="base">
+          <query>
+            | stats count by Nodo
+            | sort - count
+            | head 20
+          </query>
+        </search>
+      </chart>
+    </panel>
+  </row>
 
-
-/* porcentajes NUMÉRICOS (para reglas de color) */
-| eval acordodigital_pct      = if(acordodigital=0, 0, round(100*acordodigital/Correos,2))
-| eval notificacionesSanMX_pct= if(notificacionesSanMX=0, 0, round(100*notificacionesSanMX/Correos,2))
-| eval faturapromeial_pct     = if(faturapromeial=0, 0, round(100*faturapromeial/Correos,2))
-| eval mensajeria_pct         = if(mensajeria=0, 0, round(100*mensajeria/Correos,2))
-| eval notificacionesMX_pct   = if(notificacionesMX=0, 0, round(100*notificacionesMX/Correos,2))
-| eval Otros_pct              = if(Otros=0, 0, round(100*Otros/Correos,2))
-
-/* columnas de DISPLAY (texto) */
-| eval acordodigital_disp      = if(acordodigital=0, "0", replace(tostring(acordodigital,"commas"),",",".")      + " (" + acordodigital_pct      + "%)")
-| eval notificacionesSanMX_disp= if(notificacionesSanMX=0,"0", replace(tostring(notificacionesSanMX,"commas"),",",".") + " (" + notificacionesSanMX_pct+ "%)")
-| eval faturapromeial_disp     = if(faturapromeial=0, "0", replace(tostring(faturapromeial,"commas"),",",".")     + " (" + faturapromeial_pct     + "%)")
-| eval mensajeria_disp         = if(mensajeria=0,     "0", replace(tostring(mensajeria,"commas"),",",".")         + " (" + mensajeria_pct         + "%)")
-| eval notificacionesMX_disp   = if(notificacionesMX=0,"0", replace(tostring(notificacionesMX,"commas"),",",".")  + " (" + notificacionesMX_pct   + "%)")
-| eval Otros_disp              = if(Otros=0,          "0", replace(tostring(Otros,"commas"),",",".")              + " (" + Otros_pct              + "%)")
-
-/* muestra solo las columnas display + Correos */
-| eval Correos = replace(tostring(Correos,"commas"),",",".")
-| fields _time Correos acordodigital_disp notificacionesSanMX_disp faturapromeial_disp mensajeria_disp notificacionesMX_disp Otros_disp
-| rename _time AS Tiempo
-| rename acordodigital_disp      AS "acordodigital@santander.com.br"
-         notificacionesSanMX_disp AS "notificaciones@notificaciones.santander.com.mx"
-         faturapromeial_disp      AS "faturapromeial@santander.com.br"
-         mensajeria_disp          AS "mensajeria@santander.cl"
-         notificacionesMX_disp    AS "notificaciones@santander.com.mx"
-         Otros_disp               AS "Otros"
+  <!-- Panel 5: Correos por Status -->
+  <row>
+    <panel>
+      <title>Correos por Status</title>
+      <chart type="pie">
+        <search base="base">
+          <query>
+            | stats count by Status
+            | sort - count
+          </query>
+        </search>
+      </chart>
+    </panel>
+  </row>
+</form>
