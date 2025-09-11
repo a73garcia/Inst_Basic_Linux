@@ -11,6 +11,19 @@
         <latest>now</latest>
       </default>
     </input>
+<!-- NUEVO: filtro por host -->
+  <input type="multiselect" token="f_host" searchWhenChanged="true">
+    <label>Host</label>
+    <choice value="*.santandergroup.c3s2.iphmx.com">santandergroup.c3s2.iphmx.com</choice>
+    <choice value="*.hcs532-55.iphmx.com">hcs532-55.iphmx.com</choice>
+    <choice value="*.hcs614-33.iphmx.com">hcs614-33.iphmx.com</choice>
+    <choice value="*.santandergroup-out.c3s2.iphmx.com">santandergroup-out.c3s2.iphmx.com</choice>
+    <choice value="*.hcs533-96.iphmx.com">hcs533-96.iphmx.com</choice>
+    <default>*</default>
+    <prefix>host IN (</prefix>
+    <suffix>)</suffix>
+    <delimiter>","</delimiter>
+  </input>
   </fieldset>
 
   <!-- Búsqueda base: entrega _time, Sender, Política, Nodo, Status -->
