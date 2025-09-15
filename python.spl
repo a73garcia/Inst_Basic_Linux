@@ -1,6 +1,6 @@
 <form>
   <label>Dashboard Correos ESA</label>
-  <description>Top minutos, remitentes, políticas, nodos y status (tablas)</description>
+  <description>Paneles de minutos, remitentes, políticas, nodos y status (con barras de % en tabla)</description>
 
   <!-- Filtros -->
   <fieldset submitButton="false">
@@ -11,27 +11,21 @@
         <latest>now</latest>
       </default>
     </input>
-<!-- NUEVO: filtro por host -->
-  <input type="multiselect" token="f_host" searchWhenChanged="true">
-    <label>Host</label>
-    <choice value="*.santandergroup.c3s2.iphmx.com">santandergroup.c3s2.iphmx.com</choice>
-    <choice value="*.hcs532-55.iphmx.com">hcs532-55.iphmx.com</choice>
-    <choice value="*.hcs614-33.iphmx.com">hcs614-33.iphmx.com</choice>
-    <choice value="*.santandergroup-out.c3s2.iphmx.com">santandergroup-out.c3s2.iphmx.com</choice>
-    <choice value="*.hcs533-96.iphmx.com">hcs533-96.iphmx.com</choice>
-    <default>*</default>
-    <prefix>host IN (</prefix>
-    <suffix>)</suffix>
-    <delimiter>","</delimiter>
-  </input>
   </fieldset>
 
-  <!-- Búsqueda base: entrega _time, Sender, Política, Nodo, Status -->
+  <!-- Búsqueda base -->
   <search id="base">
     <query>
       index=smc-cloud-ciscoesa host="*.santandergroup-out.c3s2.iphmx.com" cef_cefIndex="Consolidated Log Event*"
       | eval HoraE=strptime(start, "%b %d %Y %H:%M:%S %Y")
       | eval Nodo=printf("ESA%02d", tonumber(replace(mvindex(split(host,"."),0),"esa-","")))
+      | eval CES = case(
+          like(host, "%.santandergroup.c3s2.iphmx.com"), "EU",
+          like(host, "%.hcs532-55.iphmx.com"), "AM",
+          like(host, "%.hcs614-33.iphmx.com"), "BR",
+          like(host, "%.santandergroup-out.c3s2.iphmx.com"), "APP",
+          like(host, "%.hcs533-96.iphmx.com"), "APP DR"
+        )
       | rename user AS Sender, cs1 AS Política, recipient_status AS Status
       | where isnotnull(_time) AND isnotnull(Sender) AND isnotnull(Política) AND isnotnull(Nodo) AND isnotnull(Status)
       | bin _time span=1m
@@ -40,8 +34,9 @@
     <latest>$time.latest$</latest>
   </search>
 
-  <!-- Panel 1: Top 10 minutos con más correos -->
+  <!-- Row 1 -->
   <row>
+    <!-- Columna izquierda: Top minutos -->
     <panel>
       <title>Top 10 minutos con más correos</title>
       <table>
@@ -51,14 +46,21 @@
             | sort - count
             | head 10
             | eventstats sum(count) as total
-            | eval pct=round((count/total)*100,2)."%"
-            | fields _time count pct
+            | eval pct_num=round((count/total)*100,2)
+            | eval pct=pct_num."%"
+            | eval count=tostring(count,"commas")
+            | eval bar_len=round(pct_num/5)
+            | eval bar=substr("████████████████████████",1,bar_len)
+            | fields _time count pct bar
           </query>
         </search>
+        <option name="count">10</option>
+        <option name="displayRowNumbers">true</option>
+        <option name="wrap">true</option>
       </table>
     </panel>
 
-    <!-- Panel 2: Top 10 remitentes (Sender) -->
+    <!-- Columna derecha: Top remitentes -->
     <panel>
       <title>Top 10 remitentes (Sender)</title>
       <table>
@@ -68,16 +70,24 @@
             | sort - count
             | head 10
             | eventstats sum(count) as total
-            | eval pct=round((count/total)*100,2)."%"
-            | fields Sender count pct
+            | eval pct_num=round((count/total)*100,2)
+            | eval pct=pct_num."%"
+            | eval count=tostring(count,"commas")
+            | eval bar_len=round(pct_num/5)
+            | eval bar=substr("████████████████████████",1,bar_len)
+            | fields Sender count pct bar
           </query>
         </search>
+        <option name="count">10</option>
+        <option name="displayRowNumbers">true</option>
+        <option name="wrap">true</option>
       </table>
     </panel>
   </row>
 
-  <!-- Panel 3: Correos por Política -->
+  <!-- Row 2 -->
   <row>
+    <!-- Columna izquierda: Políticas -->
     <panel>
       <title>Correos por Política</title>
       <table>
@@ -86,38 +96,48 @@
             | stats count by Política
             | sort - count
             | eventstats sum(count) as total
-            | eval pct=round((count/total)*100,2)."%"
-            | fields Política count pct
+            | eval pct_num=round((count/total)*100,2)
+            | eval pct=pct_num."%"
+            | eval count=tostring(count,"commas")
+            | eval bar_len=round(pct_num/5)
+            | eval bar=substr("████████████████████████",1,bar_len)
+            | fields Política count pct bar
           </query>
         </search>
+        <option name="count">10</option>
+        <option name="displayRowNumbers">true</option>
+        <option name="wrap">true</option>
       </table>
     </panel>
 
-    <!-- Panel 4: Top 20 Nodos ESA -->
+    <!-- Columna derecha: Top Nodos (con CES) -->
     <panel>
-      <title>Top 20 nodos (ESA)</title>
+      <title>Top 20 nodos por CES</title>
       <table>
         <search base="base">
           <query>
-            | stats count by Nodo
-            | sort - count
+            | stats count by CES Nodo
+            | sort CES - count
             | head 20
             | eventstats sum(count) as total
-            | eval pct=round((count/total)*100,2)."%"
-            | fields Nodo count pct
+            | eval pct_num=round((count/total)*100,2)
+            | eval pct=pct_num."%"
+            | eval count=tostring(count,"commas")
+            | eval bar_len=round(pct_num/5)
+            | eval bar=substr("████████████████████████",1,bar_len)
+            | fields CES Nodo count pct bar
           </query>
         </search>
-<!-- Mostrar 20 filas en una sola página -->
-      <option name="count">20</option>
-      <!-- Opcionales de UX -->
-      <option name="displayRowNumbers">true</option>
-      <option name="wrap">true</option>
+        <option name="count">20</option>
+        <option name="displayRowNumbers">true</option>
+        <option name="wrap">true</option>
       </table>
     </panel>
   </row>
 
-  <!-- Panel 5: Correos por Status -->
+  <!-- Row 3 -->
   <row>
+    <!-- Columna izquierda: Status -->
     <panel>
       <title>Correos por Status</title>
       <table>
@@ -126,30 +146,18 @@
             | stats count by Status
             | sort - count
             | eventstats sum(count) as total
-            | eval pct=round((count/total)*100,2)."%"
-            | fields Status count pct
+            | eval pct_num=round((count/total)*100,2)
+            | eval pct=pct_num."%"
+            | eval count=tostring(count,"commas")
+            | eval bar_len=round(pct_num/5)
+            | eval bar=substr("████████████████████████",1,bar_len)
+            | fields Status count pct bar
           </query>
         </search>
+        <option name="count">10</option>
+        <option name="displayRowNumbers">true</option>
+        <option name="wrap">true</option>
       </table>
     </panel>
   </row>
-
-  <!-- Panel 6: Correo mas peso -->
-<row>
-  <panel>
-    <title>Tamaño total de correos por CES (MB)</title>
-    <table>
-      <search base="base">
-        <query>
-          | stats sum('Size(MB)') as Total_MB by CES
-          | eval Total_MB=tostring(round(Total_MB,2),"commas")
-          | sort - Total_MB
-        </query>
-      </search>
-      <option name="count">10</option>
-    </table>
-  </panel>
-</row>
-
-
 </form>
