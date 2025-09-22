@@ -14,3 +14,11 @@ first(
     2
   )
 )
+
+
+first(
+  skip(
+    split(body('TXT'), decodeUriComponent('%0D%0A')),
+    2
+  )
+)
