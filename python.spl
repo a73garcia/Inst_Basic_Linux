@@ -4,3 +4,13 @@ first(
     2
   )
 )
+
+first(
+  skip(
+    split(
+      coalesce(body('TXT')?['Text'], body('TXT')?['text'], body('TXT')?['content']),
+      decodeUriComponent('%0D%0A')
+    ),
+    2
+  )
+)
