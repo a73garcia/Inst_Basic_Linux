@@ -1,24 +1,16 @@
-first(
-  skip(
-    split(outputs('TXT'), decodeUriComponent('%0D%0A')),
-    2
-  )
-)
-
-first(
-  skip(
-    split(
-      coalesce(body('TXT')?['Text'], body('TXT')?['text'], body('TXT')?['content']),
-      decodeUriComponent('%0D%0A')
-    ),
-    2
-  )
-)
-
 
 first(
   skip(
     split(body('TXT'), decodeUriComponent('%0D%0A')),
     2
   )
+)
+
+
+concat(
+  '🚨 Nueva notificación CES', '\n\n',
+  '📅 Fecha: ', outputs('Cols')[0], '\n',
+  '🎟️ Ticket: ', outputs('Cols')[1], '\n',
+  '📖 Diccionario: ', outputs('Cols')[2], '\n',
+  '🔤 Palabra: ', outputs('Cols')[3]
 )
