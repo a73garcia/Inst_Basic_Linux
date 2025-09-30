@@ -27,3 +27,10 @@ index=isem-cloud-ciscosea host="*.santandergroup-out.c32.iphmx.com" cef_6_header
 | streamstats count AS fila_en_mes by Mes
 | eval Mes=if(fila_en_mes>1,"",Mes)
 | fields Mes Politica count
+
+index=isem-cloud-ciscosea host="*.santandergroup-out.c32.iphmx.com" cef_6_header="*Consolidated Log Event*"
+| rename cs1 AS Politica
+| bin _time span=1mon
+| eval Mes=strftime(_time,"%m/%Y")
+| stats count by Mes Politica
+| xyseries Politica Mes count
