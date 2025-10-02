@@ -1,202 +1,250 @@
-# 📖 Guía de Búsquedas en Splunk (Cisco ESA / Correo + Red)
+# 📊 Guía de Búsquedas en Splunk (Cisco ESA / Correo + Red)
 
-Esta guía recopila ejemplos prácticos de búsquedas, filtrados y visualizaciones en Splunk, 
-enfocadas al análisis de **correo electrónico** y **red** a partir de logs de Cisco ESA.
+[![Splunk](https://img.shields.io/badge/Splunk-Search-blue)](https://www.splunk.com)
+
+## 📌 Tabla de Contenidos
+- [Cómo usar esta guía](#-cómo-usar-esta-guía)
+- [Búsquedas Básicas](#-búsquedas-básicas)
+- [Campos Útiles](#-campos-útiles)
+- [Tablas Personalizadas](#-tablas-personalizadas)
+- [Estadísticas y Conteos](#-estadísticas-y-conteos)
+- [Filtrados Avanzados](#-filtrados-avanzados)
+- [Ejemplos Prácticos](#-ejemplos-prácticos)
+- [Opciones de Red](#-opciones-de-red)
+- [Extracción de Dominios](#-extracción-de-dominios)
+- [Manejo de Fechas y Tiempos](#-manejo-de-fechas-y-tiempos)
+- [Consultas Avanzadas](#-consultas-avanzadas)
+- [Estadísticas Avanzadas y KPIs](#-estadísticas-avanzadas-y-kpis)
+- [Casos Especiales](#-casos-especiales-correos-sin-adjuntos--2-mb)
+- [Guardar Búsquedas y Alertas](#-guardar-búsquedas-y-alertas)
+- [Macros y Buenas Prácticas](#-macros-y-buenas-prácticas)
 
 ---
 
-## 1. Búsquedas básicas
+## 🔹 Cómo usar esta guía
+- Ajusta siempre `index="siem-eu-mta"` al índice real en tu Splunk.
+- Si `start` viene como texto (`Wed Oct 1 14:45:43 2025`), conviértelo con `strptime` + `strftime`.
+- Campos habituales: `suser`, `duser`, `internal_message_id`, `host`, `signature`, `ESA*`, `src`, `dest`.
+
+---
+
+## ⚡ Búsquedas Básicas
 
 ```spl
 index="siem-eu-mta"                              # todo en el índice
-index="siem-eu-mta" suser="usuario@dominio.com"  # filtrar remitente
-index="siem-eu-mta" duser="destino@dominio.com"  # filtrar destinatario
+index="siem-eu-mta" suser="usuario@dominio.com"  # por remitente
+index="siem-eu-mta" duser="destino@dominio.com"  # por destinatario
 index="siem-eu-mta" earliest=-24h latest=now     # últimas 24h
 ```
 
 ---
 
-## 2. Campos útiles
+## 📌 Campos Útiles
 
-- `suser` → Remitente  
-- `duser` → Destinatario  
-- `internal_message_id` → ID del mensaje (MID)  
-- `host` → Gateway o ESA que procesó el correo  
-- `start` → Fecha/hora del evento  
-- `signature` → Estado de verificación  
-- `ESAOFVerdict` → Veredicto (NEGATIVE, SKIPPED, …)  
+- `suser` → remitente  
+- `duser` → destinatario  
+- `internal_message_id` → ID mensaje (MID)  
+- `host` → ESA  
+- `start` → fecha/hora evento  
+- `signature` → estado (accepted/rejected)  
+- `ESAOFVerdict` → veredicto (NEGATIVE, SKIPPED…)  
+- `src`, `dest` → IPs  
 
 ---
 
-## 3. Tablas personalizadas
+## 📋 Tablas Personalizadas
 
 ```spl
-| rename suser AS Sender, duser AS Recipient
-| table internal_message_id Sender Recipient
+index="siem-eu-mta"
+| rename suser AS Sender, duser AS Recipient, internal_message_id AS MID
+| table MID Sender Recipient host
 ```
 
 Separar fecha en día y hora:
+
 ```spl
-| eval start_ts = strptime(start,"%a %b %e %H:%M:%S %Y")
+| eval start_ts=strptime(start,"%a %b %e %H:%M:%S %Y")
 | eval Dia=strftime(start_ts,"%Y-%m-%d"), Hora=strftime(start_ts,"%H:%M:%S")
-| table Dia Hora internal_message_id suser duser
+| table Dia Hora MID suser duser host
 ```
 
 ---
 
-## 4. Estadísticas y conteos
+## 📊 Estadísticas y Conteos
 
-Correos por remitente:
 ```spl
 | stats count BY suser | sort - count
-```
-
-Correos por dominio:
-```spl
-| rex field=suser "@(?<domain>.+)$"
-| stats count BY domain | sort - count
-```
-
-Mensajes por hora:
-```spl
+| rex field=suser "@(?<domain>[^> ]+)$" | stats count BY domain | sort - count
 | timechart span=1h count
 ```
 
 ---
 
-## 5. Filtrados avanzados
+## 🔎 Filtrados Avanzados
 
 ```spl
-signature="rejected"    # Correos rechazados
-signature="accepted"    # Mensajes aceptados
-ESAOFVerdict="NEGATIVE" # Correos con veredicto negativo
-host="CIOBI301926B"     # Filtrar por host
+signature="rejected"    # rechazados
+signature="accepted"    # aceptados
+ESAOFVerdict="NEGATIVE" # veredicto negativo
+host="CIOBI301926B"     # por host ESA
 ```
 
 ---
 
-## 6. Ejemplos prácticos
+## 🧪 Ejemplos Prácticos
 
 Ver MIDs de un remitente:
+
 ```spl
 | table _time internal_message_id duser signature
 ```
 
 Top remitentes sospechosos:
+
 ```spl
 | stats count BY suser | sort - count | head 10
 ```
 
 Flujo de correos aceptados por hora:
+
 ```spl
 signature="accepted" | timechart span=1h count
 ```
 
 ---
 
-## 7. Opciones de red
+## 🌐 Opciones de Red
 
-### 7.1 Filtrados de red
+Filtrados de red:
 
 ```spl
-src="180.205.32.105"            # IP exacta
-src="192.168.1.0/24"            # rango CIDR
-(src="x.x.x.x" OR src="y.y.y.y")# varias IPs
-host="CIOBI301926B"             # host específico
+src="180.205.32.105"            
+src="192.168.1.0/24"            
+(src="x.x.x.x" OR src="y.y.y.y")
+NOT src="10.*" NOT src="192.168.*"
 ```
 
-### 7.2 Estadísticas
+Estadísticas:
 
 ```spl
-| stats count BY src | sort - count | head 20     # top IP origen
-| stats count BY dest | sort - count | head 20    # top IP destino
-| stats count BY host | sort - count              # carga por host
+| stats count BY src | sort - count | head 20
+| stats count BY dest | sort - count | head 20
+| stats count BY host | sort - count
 ```
 
-### 7.3 Visualización
+Visualización:
 
 ```spl
-| timechart span=1h count BY src limit=10
-| table _time src dest suser duser host
-```
-
-### 7.4 Reputación de red
-
-```spl
-NOT src="10.*" NOT src="192.168.*"                # solo públicas
-| stats dc(duser) AS destinatarios count BY src   # spray detection
-```
-
-IPs con ratio de rechazo:
-```spl
-| stats sum(eval(signature="rejected")) AS rechazados count AS total BY src
-| eval ratio_rechazo=round(rechazados/total*100,2)
-| where total>=50 AND ratio_rechazo>=20
+| stats count BY src host | xyseries src host count
 ```
 
 ---
 
-## 8. Extracción de dominios
+## 🏷️ Extracción de Dominios
 
-Dominio de remitente:
 ```spl
-| rex field=suser "@(?<sender_domain>[^> ]+)$"
-| stats count BY sender_domain
+| rex field=suser "@(?<sender_domain>[^> ]+)$" | stats count BY sender_domain
+| rex field=duser "@(?<recipient_domain>[^> ]+)$" | stats count BY recipient_domain
+| rex field=suser "@(?<domain>[^> ]+)$" | stats count BY domain | sort - count | head 10
 ```
 
-Dominio de destinatario:
+---
+
+## 🕒 Manejo de Fechas y Tiempos
+
 ```spl
-| rex field=duser "@(?<recipient_domain>[^> ]+)$"
-| stats count BY recipient_domain
+| eval start_ts=strptime(start,"%a %b %e %H:%M:%S %Y")
+| eval Fecha=strftime(start_ts,"%Y-%m-%d"), Mes=strftime(start_ts,"%Y-%m"), Hora=strftime(start_ts,"%H:%M:%S"), DiaSemana=strftime(start_ts,"%A")
+| stats count BY Mes | sort Mes
+| eval Hora=strftime(start_ts,"%H") | stats count BY Hora | sort Hora
 ```
 
-Top 10 dominios:
+---
+
+## 🚀 Consultas Avanzadas
+
+### Normalización y extracción
+```spl
+| rex field=_raw "src=(?<src>(?:\d{1,3}\.){3}\d{1,3})"
+| rex field=_raw "dst=(?<dest>(?:\d{1,3}\.){3}\d{1,3})"
+```
+
+### Correlación por MID
+```spl
+| transaction internal_message_id startswith=signature="accepted" endswith=signature="delivered" keepevicted=t maxspan=2h
+```
+
+### Ventanas móviles y outliers
+```spl
+| bin _time span=1m | stats count AS c BY _time
+| streamstats window=30 avg(c) AS avg30 stdev(c) AS sd30
+| eval z=if(sd30>0,(c-avg30)/sd30,null())
+```
+
+---
+
+## 📈 Estadísticas Avanzadas y KPIs
+
 ```spl
 | rex field=suser "@(?<domain>[^> ]+)$"
-| stats count BY domain | sort - count | head 10
+| stats sum(eval(signature="rejected")) AS rechazados count AS total BY domain
+| eval ratio_rechazo=round(rechazados/total*100,2)
+```
+
+Percentiles de tamaño:
+
+```spl
+| stats avg(msg_size) AS avg p95(msg_size) AS p95 max(msg_size) AS max
+```
+
+Top remitentes con bucket “otros”:
+
+```spl
+| stats count BY suser | sort - count | head 9
+| appendpipe [ stats sum(count) AS count | eval suser="otros" ]
 ```
 
 ---
 
-## 9. Manejo de fechas y tiempos
+## 📧 Casos Especiales: correos sin adjuntos > 2 MB
 
-Convertir campo `start` en timestamp:
 ```spl
-| eval start_ts = strptime(start,"%a %b %e %H:%M:%S %Y")
+| eval size_bytes=coalesce(msg_size,message_size,bytes)
+| where size_bytes>2097152
+| where attachment_count=0 OR isnull(attachment_count)
 ```
 
-Separar fecha y hora:
-```spl
-| eval Dia=strftime(start_ts,"%Y-%m-%d"), Hora=strftime(start_ts,"%H:%M:%S")
-```
+Alternativa con regex en `_raw`:
 
-Agrupar por mes:
 ```spl
-| eval Mes=strftime(start_ts,"%Y-%m")
-| stats count BY Mes | sort Mes
-```
-
-Conteo por día de la semana:
-```spl
-| eval DiaSemana=strftime(start_ts,"%A")
-| stats count BY DiaSemana
-```
-
-Conteo por franja horaria:
-```spl
-| eval Hora=strftime(start_ts,"%H")
-| stats count BY Hora | sort Hora
+| rex field=_raw max_match=0 "(?i)(Content-Disposition:\s*attachment|filename=)"
+| eval attachment_count=mvcount(match)
+| where attachment_count=0
 ```
 
 ---
 
-## 10. Guardar búsquedas
+## 💾 Guardar Búsquedas y Alertas
 
-1. Ejecuta la búsqueda en Splunk.  
-2. Haz clic en **Save As → Saved Search**.  
-3. Pon un nombre y descripción.  
-4. Disponible en *Searches, Reports and Alerts*.  
+1. Ejecutar búsqueda  
+2. **Save As → Report / Alert**  
+3. Configurar permisos y condiciones  
 
 ---
 
-📌 **Recomendación**: Guardar las búsquedas más comunes como **Reports** y las que requieren monitoreo como **Alerts**.
+## 🛠️ Macros y Buenas Prácticas
+
+- Prefiere `stats` sobre `transaction` en grandes volúmenes.  
+- Usa `timechart` con `limit` y `useother=t`.  
+- Evita `join` en datasets grandes.  
+- Normaliza fechas a ISO (`%Y-%m-%d`).  
+- Guarda búsquedas frecuentes como Report; condiciones → Alert.  
+
+Macros:
+
+```spl
+`idx_mta()` → index="siem-eu-mta"
+`extraer_dominio(field,out)` → rex field=$field$ "@(?<$out$>[^> ]+)$"
+`solo_publicas(field)` → NOT $field$="10.*" NOT $field$="192.168.*"
+```
+
