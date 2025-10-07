@@ -1,4 +1,4 @@
-# 🌐 Guía Completa de Registros DNS
+# 🌐 Registros DNS
 
 Los registros **DNS (Domain Name System)** permiten traducir los nombres de dominio legibles (como `ejemplo.com`) en direcciones IP o servicios específicos dentro de Internet.  
 Esta guía describe los principales tipos de registros DNS, sus funciones y ejemplos prácticos.
